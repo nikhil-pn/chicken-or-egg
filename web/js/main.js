@@ -6,7 +6,10 @@
 // round opened. Nothing is asked while the tab is hidden.
 import { loadGame } from './game.js';
 import { createRpc } from './rpc.js';
-import { renderRound, renderTiles, tickRound } from './round.js';
+import { renderRoundLine, tickRound } from './round.js';
+import { renderSides, renderMe, renderLast, renderLinks } from './home.js';
+import { renderBet } from './bet.js';
+import { renderTiles } from './score.js';
 import { renderResult } from './result.js';
 import { remember, renderScouts } from './scouts.js';
 import { renderSupply, renderSim } from './supply.js';
@@ -14,7 +17,9 @@ import { renderHistory } from './history.js';
 import { renderLedger } from './ledger.js';
 import { renderRules } from './rules.js';
 import { renderPlayers } from './players.js';
-import { renderFrame, renderStatus, renderMissing, bootProblem } from './page.js';
+import { renderFrame, renderStatus, renderMissing, renderAccount, bootProblem, gameHref } from './page.js';
+import { startRouter } from './router.js';
+import { startWallet, walletTick } from './wallet.js';
 
 const POLL_MS = 5000; // get_round, never more often than this
 const MAX_WAIT_MS = 30000; // slowest retry when the chain does not answer
@@ -27,16 +32,21 @@ const state = {
   round: null, roundAt: 0, stats: null, scouts: null,
   history: [], ledger: [], ft: null, players: new Map(),
   sim: null, simError: null, seen: new Map(), ui: {},
-  error: null, late: false, updatedAt: 0, missing: false, checkedAt: 0, games: [],
+  error: null, late: false, updatedAt: 0, missing: false, checkedAt: 0, games: [], defaultId: null,
+  // The Play view: the side and amount picked, and where the bet stands. The wallet is filled by wallet.js.
+  pick: { side: null, amount: '500', stage: 'pick', step: null, error: null, txs: null, placed: null },
+  wallet: { status: 'loading', mock: false, account: null, me: null, guestOk: false },
+  redraw: () => render(),
 };
 
-const SECTIONS = [renderStatus, renderRound, renderTiles, renderResult, renderScouts, renderSupply, renderSim,
-  renderHistory, renderLedger, renderRules, renderPlayers];
+const SECTIONS = [renderStatus, renderRoundLine, renderSides, renderBet, renderMe, renderLast, renderAccount,
+  renderTiles, renderResult, renderScouts, renderSupply, renderSim, renderHistory, renderLedger, renderRules, renderPlayers];
 
 /** One broken section never takes the others down with it. */
 function render() {
+  if (!state.game) return;
   if (state.missing) {
-    for (const draw of [renderStatus, renderMissing, renderRules, renderSim]) {
+    for (const draw of [renderStatus, renderMissing, renderRoundLine, renderSides, renderBet, renderAccount, renderRules, renderSim]) {
       try { draw(state); } catch (problem) { console.error(problem); }
     }
     return;
@@ -149,11 +159,11 @@ async function readCoins() {
   if (hen === stats.hen_supply && egg === stats.egg_supply) asked.coins = sig;
 }
 
-/** The known players: when a round opens, and once more when roosting closes. */
+/** The known players: when a round opens, when the coins on either side move, and when roosting closes. */
 async function readPlayers() {
   const { game, round } = state;
   if (!game.players.length) return;
-  const sig = `${round.id}|${round.phase === 'roost' ? 'open' : 'closed'}`;
+  const sig = `${round.id}|${round.phase === 'roost' ? 'open' : 'closed'}|${round.hen_roosted}|${round.egg_roosted}`;
   if (sig === asked.players) return;
   const views = await Promise.all(game.players.map((id) => view('get_player', { account_id: id })));
   state.players = new Map(game.players.map((id, i) => [id, views[i]]));
@@ -181,6 +191,7 @@ async function poll() {
     state.missing = false;
     fails = 0;
     render();
+    walletTick(state);
     const first = await Promise.allSettled([readScouts(), readFixed(), readTurn()]);
     render();
     const then = state.stats ? await Promise.allSettled([readCoins(), readPlayers()]) : [];
@@ -216,6 +227,7 @@ async function loadSim() {
 }
 
 async function boot() {
+  startRouter();
   let start;
   try {
     start = await loadGame();
@@ -225,6 +237,8 @@ async function boot() {
   }
   state.game = start.game;
   state.games = start.games;
+  state.defaultId = start.defaultId;
+  state.gameHref = (id) => gameHref(id, start.defaultId);
   if (start.fixture) {
     const { createFixture } = await import('../dev/fixture.js');
     state.rpc = createFixture(start.fixture, state.game);
@@ -232,10 +246,12 @@ async function boot() {
     state.rpc = createRpc();
   }
   renderFrame(state, start);
+  renderLinks(state);
   render();
   loadSim();
   poll();
-  setInterval(() => { if (!document.hidden) tickRound(state); }, 1000);
+  startWallet(state, render);
+  setInterval(() => { if (!document.hidden) tickRound(state, render); }, 1000);
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) clearTimeout(timer); // a hidden tab asks nothing
     else schedule(Math.max(0, POLL_MS - (Date.now() - polledAt)));
