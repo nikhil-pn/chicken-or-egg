@@ -148,7 +148,7 @@ You need Rust 1.95 or newer with the `wasm32-unknown-unknown` target, [cargo-nea
 
 ```
 npm install
-npm test               # 15 tests of the reference model of the rules
+npm test               # 20 tests: the reference model of the rules and the live index
 ./scripts/build.sh     # builds both contracts
 cargo test             # 52 unit tests, then a full game and a gas test on a local NEAR sandbox
 npm run sim:supply     # 60 days of supply for six kinds of crowd
@@ -160,6 +160,8 @@ To check the game on testnet you need no key and no account. This reads the chai
 ```
 node scripts/audit.mjs deploy/replay.json --replay
 ```
+
+The runners that play the games are `swarm/run.mjs` (scouts) and `swarm/play.mjs` (bot players), each with a deploy file. The replay needs nothing else. The live game reads the shelves through our older price tracker, which is not in this repository, so `node swarm/run.mjs deploy/live.json` only works with `TRACKER_DIR` pointing at it.
 
 ## What is in this repository
 
