@@ -150,5 +150,5 @@ npm run sim:data     # rebuilds sim/data/daily-index.json
 npm run sim:supply   # real-series table, both supply tables, writes sim/out/supply.json
 npm run sim:swarm    # swarm tables, writes sim/out/swarm.json
 node sim/run-swarm.mjs --slash 2000   # slash_bps sensitivity (also 500, 1000); no file written
-npm test             # 15 engine tests
+npm test             # 15 engine tests, plus 5 for the live index
 ```
