@@ -42,6 +42,31 @@ The coop writes every mint and burn to a log that anyone can read with `get_ledg
 
 The values were chosen from a simulation of 200 scripted players on the real price series. It shows the supply of both coins over 60 days for six kinds of crowd: [`docs/SIMULATION.md`](docs/SIMULATION.md).
 
+## The scout swarm
+
+The scouts are the agents that tell the contract what chicken and eggs cost. Each scout is its own NEAR account under one parent account, and each has locked a bond in NEAR. The coop contract is their coordinator. It does not trust any single scout.
+
+One round for a scout:
+
+1. **Seal.** The scout sends only a hash of its two prices and a secret salt. No scout can see or copy another scout's prices.
+2. **Open.** After every seal is in, the scout sends the prices and the salt. The contract checks them against the hash.
+3. **Settle.** Anyone may call `settle()`. For each price the contract takes the middle value (the median) of the opened reports and compares it with the last round.
+4. **Pay and punish.** A scout within 1% of the middle on both prices is honest and shares the scout pay. A scout outside 1%, or one that sealed a report and never opened it, loses 10% of its bond. That NEAR goes to a pot, and the honest scouts of the round share it equally.
+5. **Bench.** A scout whose bond falls below the floor (half of the bond) is benched. The contract refuses its reports until someone tops the bond up.
+
+The replay runs seven scouts with scripted behaviours and no LLM calls, so every run can be repeated:
+
+| Scout | Behaviour |
+|---|---|
+| `scout-1` to `scout-4` | honest: report the day's prices as recorded |
+| `scout-5` | noisy: each price is off by up to 0.5% |
+| `scout-6` | lazy: skips one round in five, and in one round in ten seals a report and never opens it |
+| `scout-7` | liar: reports chicken 8% too high, to make the hen win |
+
+Each scout signs its reports with a restricted key. That key may call four methods on the coop (`commit`, `reveal`, `settle`, `collect_scout`) and cannot send NEAR. If a scout's machine is broken into, the thief cannot withdraw the bond or move the scout's NEAR. The worst it can do is send false reports and get the scout slashed.
+
+[`RULES.md`](RULES.md) has the sequence diagram and the exact whole-number arithmetic. It was written before the contract code.
+
 ## Proof on NEAR testnet
 
 Everything below is on chain and can be checked without trusting this page.
