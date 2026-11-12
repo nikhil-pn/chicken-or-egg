@@ -6,7 +6,7 @@
 > Tracks: Memecoins With Mechanics (`memecoins`) and AI Swarms (`swarms`).
 > Network: NEAR testnet only. Nothing here runs on mainnet.
 
-**Play it: [chickenoregg.vercel.app](https://chickenoregg.vercel.app)**. Pick chicken or eggs, pick an amount, bet. No wallet needed: "Play without a wallet" makes a testnet account in your browser and your first bet also claims the free starter pack. Or connect a NEAR testnet wallet. The [replay of 107 recorded days](https://chickenoregg.vercel.app/?game=replay) is there too. The page reads the chain straight from your browser.
+**Play it: [chickenoregg.vercel.app](https://chickenoregg.vercel.app)**. Pick chicken or eggs, pick an amount, bet. No wallet needed: "Play without a wallet" makes a testnet account in your browser and your first bet also claims the starter pack: 1,000 $HEN and 1,000 $EGG for 0.1 testnet NEAR. Or connect a NEAR testnet wallet. The [replay of 107 recorded days](https://chickenoregg.vercel.app/?game=replay) is there too. The page reads the chain straight from your browser.
 
 Two memecoins, **$HEN** and **$EGG**, settle the oldest argument on Earth, one round at a time.
 
@@ -15,10 +15,10 @@ Two memecoins, **$HEN** and **$EGG**, settle the oldest argument on Earth, one r
 Each step: do this, then see that. No install, no wallet.
 
 1. Open [chickenoregg.vercel.app](https://chickenoregg.vercel.app). You see today's round of the live game, a countdown, and how many coins back chicken and eggs.
-2. Tap **Chicken**, tap **100**, tap **Play without a wallet**, tap **Bet**. In about 15 seconds you see "You're in: 100 $HEN on chicken" with a link to the transaction. Your first bet also claimed a free starter pack (1,000 $HEN and 1,000 $EGG). Bets are open for 12 hours a day, from about 09:13 to 21:13 UTC; outside that window the card says when they open again.
-3. Open **Scouts** ([chickenoregg.vercel.app/#/scouts](https://chickenoregg.vercel.app/#/scouts)). You see the seven scout agents, their bonds and earnings, their reports once they are opened, and the middle price. In the [replay's scouts view](https://chickenoregg.vercel.app/?game=replay#/scouts), `scout-7` is benched: it lied in seven rounds, was slashed each time and earned nothing.
+2. Tap **Chicken**, tap **100**, tap **Play without a wallet**, tap **Bet**. In about 15 seconds you see "You're in: 100 $HEN on chicken" with a link to the transaction. Your first bet also claimed the starter pack (1,000 $HEN and 1,000 $EGG for 0.1 testnet NEAR, paid from the guest account's faucet NEAR). Bets are open for 12 hours a day, from about 09:13 to 21:13 UTC; outside that window the card says when they open again.
+3. Open **Scouts** ([chickenoregg.vercel.app/#/scouts](https://chickenoregg.vercel.app/#/scouts)). You see the seven scout agents, their bonds and earnings, their reports once they are opened, and the middle price. In the [replay's scouts view](https://chickenoregg.vercel.app/?game=replay#/scouts), `scout-7` is benched: it lied in seven rounds, was slashed each time and earned nothing. `scout-6`, the lazy one, is benched too: it sealed reports and never opened them (rounds 23, 26, 33, 38, 39 and 46, plus the round-11 outage).
 4. Open **Stats** ([chickenoregg.vercel.app/#/stats](https://chickenoregg.vercel.app/#/stats)). You see every settled round and every mint and burn, newest first.
-5. Open **On chain** ([chickenoregg.vercel.app/#/proof](https://chickenoregg.vercel.app/#/proof)). You see that the coins and the coop have no access keys, and every parameter read live from the contract.
+5. Open **On chain** ([chickenoregg.vercel.app/#/proof](https://chickenoregg.vercel.app/#/proof)). You see that the coins and the coop have no access keys, Open **See more** to read every parameter live from the contract.
 6. Check it without the page:
    ```
    near account list-keys coop.chickenoregg.testnet network-config testnet now   # no access keys
@@ -77,7 +77,7 @@ The replay runs seven scouts with scripted behaviours and no LLM calls, so every
 |---|---|
 | `scout-1` to `scout-4` | honest: report the day's prices as recorded |
 | `scout-5` | noisy: each price is off by up to 0.5% |
-| `scout-6` | lazy: skips one round in five, and in one round in ten seals a report and never opens it |
+| `scout-6` | lazy: skips one round in five, and in one round in ten seals a report and never opens it. In the replay it was slashed 7 times and benched. |
 | `scout-7` | liar: reports chicken 8% too high, to make the hen win |
 
 Each scout signs its reports with a restricted key. That key may call four methods on the coop (`commit`, `reveal`, `settle`, `collect_scout`) and cannot send NEAR. If a scout's machine is broken into, the thief cannot withdraw the bond or move the scout's NEAR. The worst it can do is send false reports and get the scout slashed.
@@ -153,22 +153,23 @@ Round 1 sets the baseline (13 Nov). Round 2 is the first one with a winner (14 N
 ## Limits, stated plainly
 
 - **A majority of scouts can lie together.** The middle value is safe only while fewer than half of the reporting scouts collude. Anyone can join as a scout for one bond, so an attack costs about (N/2 + 1) bonds. With real money the bond must be far larger than what one round can move.
-- **We run the first scouts.** All seven run on our machine. Registration is open to anyone, but until others join, the result rests on us.
+- **We run the first scouts.** All seven run in one program on our machine, and in the live game they share one shelf reading, so the live game tests the coop, not whether the scouts are independent. Registration is open to anyone, but until others join, the result rests on us.
 - **Many accounts.** Hatches and fries are in proportion to the coins roosted, so splitting coins over many accounts gains nothing. The starter pack is per account. One person with many accounts can take many packs; only the fee (0.1 NEAR) and the cap (100 packs) limit that.
 - **Shop prices move slowly.** Someone who watches the shelves closely will guess better than a coin flip. That is the game.
 - **One city, three shops.** The prices are real shelf prices from grocery delivery apps in Kochi, India. This is a real series, not a national statistic. The contract compares each price only with its own value in the last round, so the currency and the units drop out. See [`docs/INDEX.md`](docs/INDEX.md).
 - **Guests rely on the public testnet faucet.** "Play without a wallet" asks NEAR's testnet faucet for a new account and keeps its key in your browser's storage. Clear the storage and the account is gone. Use a wallet to keep it.
-- **The testnet game is a replay.** It plays 107 recorded days, one day about every 100 seconds, so anyone can check each round against `sim/data/daily-index.json`. The scouts read the recorded series, not the shops.
+- **The replay plays recorded days.** The replay game played 107 recorded days, one day about every 100 seconds, so anyone can check each round against `sim/data/daily-index.json`. Its scouts read the recorded series, not the shops. Only the live game reads the shops.
 - **The coop pays for its own storage.** Each round adds about 450 bytes to the contract (measured over rounds 11 to 20), which locks about 0.0045 NEAR. The coop pays this from its own balance. Anyone can send it more NEAR.
 - **NEAR has no timer.** A round moves on only when someone calls `settle()`. The scouts take turns, and anyone else may call it too.
 - **Testnet only.** Nothing is deployed on mainnet and the coins have no value.
 
 ## What went wrong during the replay
 
-The mistakes are on chain and we left them there. Six of the first 20 rounds are void:
+The mistakes are on chain and we left them there. Seven rounds are void, six of them in the first 20:
 
 - **Rounds 1, 2 and 4** passed while we were starting and restarting the scout program. No scout reported.
 - **Rounds 11, 12 and 15.** The free public RPC node we used stopped answering for a minute or two at a time. In round 11 six scouts had sealed their reports and could not open them in time. The contract did what the rules say: it slashed all six and made the round void ([transaction](https://testnet.nearblocks.io/txns/89naNGSBKCoC5wRJ7iaB59nGQ8rBTXReHRbLj6hfqjUr)). Rounds 12 and 15 got fewer than three reports and are void too.
+- **Round 78.** The machine running the scouts lost its connection to both RPC nodes for the whole commit phase, so no scout sealed a report.
 
 A void round mints and burns nothing and keeps the last good prices. The scouts report the missed day again in the next round, so no recorded day is skipped. After round 12 the scouts got a second RPC node, and after round 15 a limit of 20 seconds per request (`lib/near.mjs`).
 
@@ -180,7 +181,7 @@ You need Rust 1.95 or newer with the `wasm32-unknown-unknown` target, [cargo-nea
 npm install
 npm test               # 20 tests: the reference model of the rules and the live index
 ./scripts/build.sh     # builds both contracts
-cargo test             # 52 unit tests, then a full game and a gas test on a local NEAR sandbox
+cargo test             # 52 unit tests, then 3 sandbox tests: smoke, a three-round game, gas (about 11 minutes)
 npm run sim:supply     # 60 days of supply for six kinds of crowd
 npm run sim:swarm      # the scout swarm with scripted strategies, no LLM calls
 ```
@@ -188,7 +189,7 @@ npm run sim:swarm      # the scout swarm with scripted strategies, no LLM calls
 The page is plain static files that read the chain from the browser. Serve the folder and open it:
 
 ```
-python3 -m http.server 8000 -d web    # then open http://localhost:8000 (add ?game=live for the live game)
+python3 -m http.server 8000 -d web    # then open http://localhost:8000 (add ?game=replay for the replay)
 ```
 
 To check the game on testnet you need no key and no account. This reads the chain and compares every settled round with `RULES.md` and with the recorded days:
@@ -206,7 +207,7 @@ The runners that play the games are `swarm/run.mjs` (scouts) and `swarm/play.mjs
 | [`RULES.md`](RULES.md) | The rules, the sequence diagram and the exact arithmetic. Written before the code. |
 | `contracts/token` | The NEP-141 coin. Only the coop can mint and burn. Deployed twice, as `$HEN` and `$EGG`. |
 | `contracts/coop` | The coordinator: rounds, roosts, sealed reports, slashing, the mint and burn log. |
-| `e2e/` | Full games on a local sandbox, and a gas test of `settle()` with 32 scouts. |
+| `e2e/` | Three tests on a local NEAR sandbox: a smoke test, a three-round game, and a gas test of `settle()` with 32 scouts. |
 | `sim/` | The simulation and a reference model of the rules in plain JavaScript. |
 | `swarm/` | The scout agents and the bot players that run against testnet. |
 | `AGENTS.md`, `CLAUDE.md` | The short path for AI reviewers: accounts, commands and what each should print. |
