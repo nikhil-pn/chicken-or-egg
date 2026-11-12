@@ -17,9 +17,11 @@ Scouts: `scout-1` to `scout-7.chickenoregg.testnet`. Bot players: `henmaxi`, `eg
 |---|---|
 | `npm install && npm test` | 20 tests pass (15 for the reference model of the rules, 5 for the live price index) |
 | `./scripts/build.sh` | `target/near/coe_coop/coe_coop.wasm` and `target/near/coe_token/coe_token.wasm` (needs Rust 1.95+, the `wasm32-unknown-unknown` target and cargo-near) |
-| `cargo test` | 52 unit tests in `contracts/`, then 3 end-to-end tests in `e2e/` on a local NEAR sandbox (slow: several minutes) |
+| `cargo test` | 52 unit tests in `contracts/` (46 coop, 6 token), then 3 sandbox tests in `e2e/`: smoke, a three-round game, gas (about 11 minutes on a slow machine) |
+| compare `sha256` of the built wasm (base58) with `code_hash` from RPC `view_account` | coops `69tGTYT1znsLCzYj98SFBiZec6peQJTJ2frDPCJG2Xik`, coins `DzJ6HiyqRBFEmxw7anRvzw6LQf7xNjJdKFwkxUfYahRF`: the deployed code is this code |
 | `node scripts/audit.mjs deploy/replay.json --replay` | reads testnet with no key; prints the tally (1 baseline, 46 hen, 47 egg, 13 tie, 7 void) and `"failures": []` |
 | `near account list-keys coop.chickenoregg.testnet network-config testnet now` | no keys (same for the other five contract accounts) |
+| open a transaction from the README tables | `testnet.nearblocks.io` pages may show a bot check to headless browsers; use `https://api-testnet.nearblocks.io/v3/txns/<hash>` or RPC `https://near-testnet.drpc.org` (method `tx`) instead |
 | open https://chickenoregg.vercel.app | the live round; README "Try it in five minutes" lists each step and what you should see |
 
 ## Where things are
