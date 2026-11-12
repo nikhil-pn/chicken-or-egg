@@ -1,0 +1,29 @@
+{
+  "about": "The live coop: one round a day. The scouts read today's shop shelves once, 45 minutes before the commit phase ends, so players must pick a side 11 hours or more before anyone sees the prices.",
+  "home": "chickenoregg.testnet",
+  "prices": "shelf",
+  "fund": {
+    "hen": "2 NEAR",
+    "egg": "2 NEAR",
+    "coop": "3.5 NEAR"
+  },
+  "config": {
+    "roost_secs": 43200,
+    "commit_secs": 39600,
+    "reveal_secs": 3600,
+    "hatch_bps": 300,
+    "fry_bps": 300,
+    "tie_bps": 10,
+    "scout_pay": "100 COIN",
+    "scout_bond": "0.3 NEAR",
+    "min_bond": "0.15 NEAR",
+    "slash_bps": 1000,
+    "tolerance_bps": 100,
+    "min_reveals": 3,
+    "max_scouts": 32,
+    "starter_hen": "1000 COIN",
+    "starter_egg": "1000 COIN",
+    "starter_fee": "0.1 NEAR",
+    "starter_cap": 100
+  }
+}
