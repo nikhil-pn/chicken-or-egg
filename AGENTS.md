@@ -15,7 +15,7 @@ Scouts: `scout-1` to `scout-7.chickenoregg.testnet`. Bot players: `henmaxi`, `eg
 
 | Do | Expect |
 |---|---|
-| `npm install && npm test` | 20 tests pass (15 for the reference model of the rules, 5 for the live price index) |
+| `npm install && npm test` | 28 tests pass (15 for the reference model of the rules, 5 for the live price index, 7 for the AI scout with a fake model, 1 for the shelf reader) |
 | `./scripts/build.sh` | `target/near/coe_coop/coe_coop.wasm` and `target/near/coe_token/coe_token.wasm` (needs Rust 1.95+, the `wasm32-unknown-unknown` target and cargo-near) |
 | `cargo test` | 52 unit tests in `contracts/` (46 coop, 6 token), then 3 sandbox tests in `e2e/`: smoke, a three-round game, gas (about 11 minutes on a slow machine) |
 | compare `sha256` of the built wasm (base58) with `code_hash` from RPC `view_account` | coops `69tGTYT1znsLCzYj98SFBiZec6peQJTJ2frDPCJG2Xik`, coins `DzJ6HiyqRBFEmxw7anRvzw6LQf7xNjJdKFwkxUfYahRF`: the deployed code is this code |

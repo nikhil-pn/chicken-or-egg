@@ -179,7 +179,7 @@ You need Rust 1.95 or newer with the `wasm32-unknown-unknown` target, [cargo-nea
 
 ```
 npm install
-npm test               # 20 tests: the reference model of the rules and the live index
+npm test               # 28 tests: the rules model, the live index, the AI scout (fake model), the shelf reader
 ./scripts/build.sh     # builds both contracts
 cargo test             # 52 unit tests, then 3 sandbox tests: smoke, a three-round game, gas (about 11 minutes)
 npm run sim:supply     # 60 days of supply for six kinds of crowd
