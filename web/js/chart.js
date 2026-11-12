@@ -7,7 +7,11 @@ const MARGIN = { top: 14, right: 96, bottom: 30, left: 48 };
 
 /** Round tick values that cover [min, max]. */
 function ticks(min, max, want = 4) {
-  if (min === max) { min -= 1; max += 1; }
+  if (min === max) {
+    const pad = Math.max(1, 10 ** Math.floor(Math.log10(Math.abs(min) || 1)) / 2); // a flat line sits mid-chart with clean ticks
+    min -= pad;
+    max += pad;
+  }
   const raw = (max - min) / want;
   const pow = 10 ** Math.floor(Math.log10(raw));
   const step = [1, 2, 2.5, 5, 10].map((m) => m * pow).find((v) => v >= raw);
