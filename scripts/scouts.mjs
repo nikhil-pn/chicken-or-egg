@@ -16,11 +16,14 @@ if (!file) throw new Error('Usage: node scripts/scouts.mjs deploy/<game>.json');
 const game = basename(file, '.json');
 const { data: lock, note, save } = openRecord(file);
 const swarm = JSON.parse(readFileSync(new URL('../deploy/swarm.json', import.meta.url), 'utf8'));
+// The AI scout reads the shop shelves, so it joins only the live game.
+const live = JSON.parse(readFileSync(file, 'utf8')).prices === 'shelf';
+const roster = swarm.scouts.filter(({ kind }) => live || kind !== 'ai');
 const coop = lock.coop;
 const config = await view(coop, 'get_config');
 const parent = loadAccount(swarm.parent);
 
-for (const { name } of swarm.scouts) {
+for (const { name } of roster) {
   const id = `${name}.${swarm.parent}`;
   if (!(await accountExists(id))) {
     const publicKey = newKey(id);
@@ -44,6 +47,6 @@ for (const { name } of swarm.scouts) {
     }));
   }
 }
-lock.scouts = swarm.scouts.map(({ name }) => `${name}.${swarm.parent}`);
+lock.scouts = roster.map(({ name }) => `${name}.${swarm.parent}`);
 save();
 console.log(`\n${lock.scouts.length} scouts enrolled in ${coop}`);
