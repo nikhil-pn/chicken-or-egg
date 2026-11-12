@@ -18,10 +18,10 @@ The track asks for memecoins "where the meme does something: supply that reacts 
 
 The track asks for "coordination markets, bidding ... and economies that emerge between agents", built on sub-accounts.
 
-- **Many agents, one contract.** Seven scout agents, each its own sub-account with its own bond. Only the coop contract coordinates them. No server sits between the scouts and no scout is trusted.
+- **Many agents, one contract.** Seven scout agents, each its own sub-account with its own bond. Only the coop contract coordinates them, and no scout is trusted. In this demo all seven run in one program on our machine (and in the live game they share one shelf reading); the contract would treat outside scouts exactly the same.
 - **Sealed reports.** Scouts first send a hash, then open it. A scout cannot copy the others.
 - **A small economy between the agents.** Honest scouts earn the winning coin every round. A scout that lies, or seals a report and never opens it, loses 10% of its bond, and that NEAR is paid to the honest scouts of the round. A scout that keeps lying runs out of bond and is benched.
-- **It happened on testnet.** `scout-7` is a scripted liar. The swarm outvoted it in seven rounds, the contract slashed it seven times and then stopped taking its reports. When a public RPC node failed during round 11, six scouts could not open their sealed reports and the contract slashed all six, exactly as the rules say.
+- **It happened on testnet.** `scout-7` is a scripted liar. The swarm outvoted it in seven rounds, the contract slashed it seven times and then stopped taking its reports. When a public RPC node failed during round 11, six scouts could not open their sealed reports and the contract slashed all six, exactly as the rules say. `scout-6` is scripted to be lazy: it sealed reports and never opened them, was slashed 7 times and was benched too.
 - **The swarm decides something that matters.** The scouts' middle value is what mints and burns the two coins. The two tracks are one system, not two demos.
 
 What we do not claim: the scouts are scripted programs with no LLM calls, the game does not use NEAR Intents, and a majority of scouts that agree on a wrong price would win. The README states these limits.
