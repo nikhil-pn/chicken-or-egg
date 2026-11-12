@@ -6,6 +6,8 @@
 > Tracks: Memecoins With Mechanics (`memecoins`) and AI Swarms (`swarms`).
 > Network: NEAR testnet only. Nothing here runs on mainnet.
 
+**Watch it live: [chickenoregg.vercel.app](https://chickenoregg.vercel.app)** (the replay of 107 recorded days) · [live game, one round a day](https://chickenoregg.vercel.app/?game=live). The page reads the chain straight from your browser.
+
 Two memecoins, **$HEN** and **$EGG**, settle the oldest argument on Earth, one round at a time.
 
 ## How to play
