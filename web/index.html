@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Chicken or Egg</title>
+  <meta name="description" content="Which came first today? A memecoin game on NEAR testnet: $HEN against $EGG, decided each round by real shop prices that a swarm of scout agents report.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A5%9A%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/parts.css">
+  <link rel="stylesheet" href="css/sections.css">
+  <script src="js/theme.js"></script>
+</head>
+<body>
+  <a class="skip" href="#round">Skip to the game</a>
+  <div class="sticky-top">
+  <div id="fixture-banner" class="fixture-banner" role="alert" hidden></div>
+  <header class="top">
+    <div class="wrap top-in">
+      <a class="brand" href="#round"><span aria-hidden="true">🐔🥚</span> Chicken or Egg</a>
+      <nav class="nav" aria-label="Sections of this page">
+        <a href="#round">Round</a>
+        <a href="#scouts">Scouts</a>
+        <a href="#supply">Supply</a>
+        <a href="#history">History</a>
+        <a href="#players">Players</a>
+        <a href="#log">Log</a>
+        <a href="#rules">Rules</a>
+      </nav>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch colours">🌙</button>
+    </div>
+  </header>
+  </div>
+
+  <main class="wrap">
+    <div id="game-switch" class="game-switch"></div>
+    <div id="replay-banner" class="replay-banner" hidden></div>
+    <div id="frame-notes"></div>
+
+    <section id="round" class="hero" aria-labelledby="question">
+      <p class="kicker">A memecoin game on NEAR testnet</p>
+      <h1 id="question">Which came first today?</h1>
+      <p class="lede">Two coins, one question. Every round, a swarm of scout agents reports the real shop price of chicken and of eggs. The price that went up more (or fell less) comes first: its coin hatches, the other coin gets fried.</p>
+      <div class="versus">
+        <div class="coin coin-hen">
+          <span class="coin-face" aria-hidden="true">🐔</span>
+          <span class="coin-text"><span class="coin-name">$HEN</span><span class="coin-sub">wins when chicken beats eggs</span></span>
+        </div>
+        <span class="vs">vs</span>
+        <div class="coin coin-egg">
+          <span class="coin-face" aria-hidden="true">🥚</span>
+          <span class="coin-text"><span class="coin-name">$EGG</span><span class="coin-sub">wins when eggs beat chicken</span></span>
+        </div>
+      </div>
+      <p id="status" class="status" role="status">Connecting to NEAR testnet…</p>
+      <div id="round-card" class="card round-card"></div>
+      <div id="tiles" class="tiles"></div>
+    </section>
+
+    <section id="result" aria-label="Last result">
+      <div id="result-card" class="card result-card"></div>
+    </section>
+
+    <section id="scouts" aria-labelledby="scouts-title">
+      <h2 id="scouts-title">The scout swarm</h2>
+      <p class="lede">Each scout is an agent with its own NEAR bond. It seals a price report, then opens it. The coop takes the middle price. Honest scouts get paid, and a scout that lies loses part of its bond.</p>
+      <div id="scouts-body"></div>
+    </section>
+
+    <section id="supply" aria-labelledby="supply-title">
+      <h2 id="supply-title">Supply over time</h2>
+      <p class="lede">Every hatch mints new coins and every fry burns some. This is how much of each coin exists.</p>
+      <div class="card">
+        <p class="card-label">On the chain</p>
+        <div id="supply-body"></div>
+      </div>
+      <div class="card sim-card">
+        <p class="card-label"><span class="chip chip-warn">Simulation, not chain data</span></p>
+        <h3>A bigger crowd, simulated</h3>
+        <div id="sim-body"></div>
+      </div>
+    </section>
+
+    <section id="history" aria-labelledby="history-title">
+      <h2 id="history-title">Round history</h2>
+      <p class="lede">Every round the coop has settled: the result, the middle prices, what was minted and burned, and who was slashed.</p>
+      <div class="card"><div id="history-body"></div></div>
+    </section>
+
+    <section id="players" aria-labelledby="players-title">
+      <h2 id="players-title">Players</h2>
+      <p class="lede">A small leaderboard of the player accounts known for this game.</p>
+      <div class="card"><div id="players-body"></div></div>
+    </section>
+
+    <section id="log" aria-labelledby="log-title">
+      <h2 id="log-title">Mint and burn log</h2>
+      <p class="lede">Every coin that was ever created or destroyed, one line each, read from the coop contract.</p>
+      <div class="card"><div id="log-body"></div></div>
+    </section>
+
+    <section id="rules" aria-labelledby="rules-title">
+      <h2 id="rules-title">Rules of the game</h2>
+      <ol id="rules-steps" class="rules"></ol>
+      <h3 id="params-title" class="sub-title">Parameters set at launch</h3>
+      <div class="card"><div id="params-body"></div></div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot-in">
+      <div>
+        <p class="foot-title">The contracts</p>
+        <ul id="contracts" class="contracts"></ul>
+      </div>
+      <div class="foot-side">
+        <p><b>Built at NEAR HACKATHON.</b></p>
+        <p><a href="https://github.com/nikhil-pn/chicken-or-egg" target="_blank" rel="noopener">Source code on GitHub</a></p>
+        <p class="foot-fine">This page only reads the chain. It has no wallet, no keys and signs nothing. The coins are testnet coins and have no value.</p>
+      </div>
+    </div>
+  </footer>
+
+  <noscript><p class="noscript">This page reads the game from the NEAR testnet with JavaScript. Please turn JavaScript on to see it.</p></noscript>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
