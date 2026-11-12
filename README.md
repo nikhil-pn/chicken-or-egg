@@ -87,6 +87,7 @@ Everything below is on chain and can be checked without trusting this page.
 | A new player takes a starter pack | [henmaxi](https://testnet.nearblocks.io/txns/6m581wLSsJEwSKcj7jQyYGBREtnFTuCDGzHJp7UmeYUo) |
 | A round goes to the hen: mint to hen roosters, burn from egg roosters | round 13, [settle](https://testnet.nearblocks.io/txns/AZz1dQZsSLJDhJxNxaKmuCg6nsdyCr22ycqDDcF4EgLn) |
 | A round goes to the egg | round 18, [settle](https://testnet.nearblocks.io/txns/3zyfMYBb2rsFTF4mMJpMReBjfpeQNiuVGYZE9L24uaz9) |
+| A tie: the two moves were closer than 0.1 percentage points, nothing minted or burned | round 6, [settle](https://testnet.nearblocks.io/txns/8bSZubdzPrRLMVP9H5v9qaKqReVcbJpUWfrTtHB3XchU) |
 | Scouts that seal a report and never open it lose bond | round 11, [settle](https://testnet.nearblocks.io/txns/89naNGSBKCoC5wRJ7iaB59nGQ8rBTXReHRbLj6hfqjUr): six scouts slashed, round void |
 | A scout that lies is slashed until it is benched | `scout-7` reported false prices in seven rounds (3, and 5 to 10). It was slashed 7 times, its bond fell from 0.3 to 0.143 NEAR, below the floor of 0.15, and the coop stopped taking its reports. |
 
