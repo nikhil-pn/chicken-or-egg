@@ -15,6 +15,7 @@ mod scouts;
 mod settle;
 #[cfg(test)]
 mod testing;
+mod views;
 
 use near_sdk::json_types::U128;
 use near_sdk::store::{IterableMap, LookupMap, Vector};
