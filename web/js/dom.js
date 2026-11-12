@@ -1,4 +1,5 @@
 // Small DOM helpers. Chain data only ever reaches the page through textContent.
+import { sticker } from './stickers.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
@@ -44,9 +45,9 @@ export function onChange(node, inputs, draw) {
   return true;
 }
 
-/** A friendly box for a section that has nothing to show yet. */
-export const empty = (emoji, title, text) =>
-  h('div', { class: 'empty' }, h('span', { class: 'empty-emoji', 'aria-hidden': 'true' }, emoji),
+/** A friendly box for a section that has nothing to show yet. `art` is a sticker name. */
+export const empty = (art, title, text) =>
+  h('div', { class: 'empty' }, sticker(art, { size: 'lg', tilt: -5 }),
     h('p', { class: 'empty-title' }, title), text ? h('p', { class: 'empty-text' }, text) : null);
 
 /**
