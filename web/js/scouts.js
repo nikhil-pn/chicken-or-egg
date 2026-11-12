@@ -1,7 +1,8 @@
 // The scout swarm: one row per scout, the middle price they set, and who got what.
-import { $, h, put, onChange, empty, table, row, chip } from './dom.js';
+import { $, h, put, onChange, empty, chip } from './dom.js';
 import { big, near, coins, price, pricePer, acct, plural, SIDE } from './format.js';
 import { ledgerOfRound } from './result.js';
+import { sticker } from './stickers.js';
 
 /**
  * The middle value, by the same rule as the contract: with an even count
@@ -29,15 +30,6 @@ export function remember(state) {
   for (const id of [...seen.keys()]) if (id < round.id - 2) seen.delete(id);
 }
 
-const HEADS = [
-  { label: 'Scout' },
-  { label: 'This round' },
-  { label: 'Price report (bid)' },
-  { label: 'Bond', num: true },
-  { label: 'Honest rounds', num: true },
-  { label: 'Slashed rounds', num: true },
-  { label: 'Earned, not collected yet' },
-];
 
 function status(scout, phase) {
   if (scout.benched) return chip('bad', 'Benched', 'The bond fell below the minimum. This scout cannot report until it is topped up.');
@@ -50,13 +42,13 @@ function status(scout, phase) {
   return chip('plain', phase === 'roost' ? 'Waiting' : 'No report');
 }
 
-const pair = (hen, egg, unit) => `🐔 ${price(hen, unit)} · 🥚 ${price(egg, unit)}`;
+const pair = (hen, egg, unit) => `chicken ${price(hen, unit)} · eggs ${price(egg, unit)}`;
 
 function report(scout, state, last) {
   const unit = state.game.price;
   const lines = [];
   if (scout.revealed && scout.hen_price !== null) lines.push(h('span', { class: 'bid' }, pair(scout.hen_price, scout.egg_price, unit)));
-  else if (scout.sealed) lines.push(h('span', { class: 'bid muted' }, '🔒 hidden until the reveal'));
+  else if (scout.sealed) lines.push(h('span', { class: 'bid muted' }, 'sealed: hidden until it opens'));
   else lines.push(h('span', { class: 'bid muted' }, '—'));
   const before = last && state.seen.get(last.id) && state.seen.get(last.id).get(scout.scout_id);
   if (before) {
@@ -73,13 +65,18 @@ function earned(scout) {
   if (big(scout.earned_near) > 0n) bits.push(near(scout.earned_near));
   if (big(scout.earned_hen) > 0n) bits.push(`${coins(scout.earned_hen)} HEN`);
   if (big(scout.earned_egg) > 0n) bits.push(`${coins(scout.earned_egg)} EGG`);
-  return bits.length ? bits.join(' · ') : 'Nothing yet';
+  return bits.length ? bits.join(' · ') : 'nothing yet';
 }
 
-function scoutCell(scout) {
-  const funded = scout.funder && scout.funder !== scout.scout_id
-    ? h('span', { class: 'bid-last' }, 'funded by ', acct(scout.funder)) : null;
-  return h('div', { class: 'bid-cell' }, acct(scout.scout_id), funded);
+/** One scout as a small card: name, status, its report this round, and its record. */
+function scoutCard(scout, state, last) {
+  const funded = scout.funder && scout.funder !== scout.scout_id ? [' · funded by ', acct(scout.funder)] : null;
+  return h('li', { class: scout.benched ? 'scout scout-off' : 'scout' },
+    h('div', { class: 'scout-head' }, sticker('scout', { size: 'sm', tilt: -6 }),
+      h('span', { class: 'scout-name' }, acct(scout.scout_id, scout.scout_id.split('.')[0])), status(scout, state.round.phase)),
+    report(scout, state, last),
+    h('p', { class: 'scout-facts' }, `Bond ${near(scout.bond)} · ${scout.honest_rounds} honest · ${scout.slashed_rounds} slashed`
+      + ` · earned, not collected: ${earned(scout)}`, funded));
 }
 
 /** Middle prices: the last settled ones, and the ones forming in the open round. */
@@ -94,10 +91,10 @@ function middleBox(state, last) {
     const synced = state.history.length === round.id - 1;
     const from = synced ? [...state.history].reverse().find((r) => r.outcome !== 'void') : null;
     kids.push(h('div', { class: 'mid-prices' },
-      h('div', { class: 'mid-price mid-hen' }, h('span', { class: 'mid-name' }, '🐔 Chicken'),
-        h('b', null, pricePer(round.last_hen_price, unit, 'hen'))),
-      h('div', { class: 'mid-price mid-egg' }, h('span', { class: 'mid-name' }, '🥚 Eggs'),
-        h('b', null, pricePer(round.last_egg_price, unit, 'egg')))));
+      h('div', { class: 'mid-price mid-hen' }, sticker('hen', { size: 'md', tilt: -6 }),
+        h('span', null, h('span', { class: 'mid-name' }, 'Chicken'), h('b', null, pricePer(round.last_hen_price, unit, 'hen')))),
+      h('div', { class: 'mid-price mid-egg' }, sticker('egg', { size: 'md', tilt: 6 }),
+        h('span', null, h('span', { class: 'mid-name' }, 'Eggs'), h('b', null, pricePer(round.last_egg_price, unit, 'egg'))))));
     kids.push(h('p', { class: 'mid-note' }, from
       ? `Set by round ${from.id} from ${plural(from.reveals, 'opened report')}. Half of the scouts reported this much or more, half this much or less.`
       : 'The middle of the reports the scouts opened in the last decided round.'));
@@ -153,7 +150,7 @@ export function renderScouts(state) {
     if (!scouts.length) {
       const bond = config ? near(config.scout_bond) : 'a bond';
       const need = config ? config.min_reveals : 'enough';
-      put(box, empty('🔭', 'No scouts have joined yet',
+      put(box, empty('scout', 'No scouts have joined yet',
         `A scout joins by locking ${bond}. A round is decided once at least ${need} scouts open a report.`));
       return;
     }
@@ -164,15 +161,8 @@ export function renderScouts(state) {
       h('p', { class: 'section-note' },
         `${plural(scouts.length, 'scout')} in the swarm${benched ? `, ${benched} benched` : ''}. `
         + `Pot waiting for honest scouts: ${near(pot)}.`),
-      table('Scouts and their reports', HEADS, scouts.map((scout) => row([
-        scoutCell(scout),
-        status(scout, round.phase),
-        report(scout, state, last),
-        near(scout.bond),
-        String(scout.honest_rounds),
-        String(scout.slashed_rounds),
-        earned(scout),
-      ], HEADS, scout.benched ? 'row-off' : null)), true),
+      h('ul', { class: 'scout-list', 'aria-label': 'The scouts and their reports this round' },
+        scouts.map((scout) => scoutCard(scout, state, last))),
       h('p', { class: 'fine' },
         'A report is sealed first and opened later, so no scout can copy another. '
         + 'The chain shows opened reports only until the round settles; '
