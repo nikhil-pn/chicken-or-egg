@@ -1,0 +1,217 @@
+/* Colours, type, page frame: header, banners, status line, footer. */
+
+:root {
+  --bg: #fff9e8;
+  --card: #fffefa;
+  --ink: #1d1a12;
+  --ink-2: #57503f;
+  --muted: #736c59;
+  --hair: #e9e2cc;
+  --line: #1d1a12;
+  --shadow: #1d1a12;
+  --edge: rgb(29 26 18 / 20%);
+  --glow: #ffe9a3;
+  --link: #0b5c85;
+
+  /* The coins' own colours (their on-chain icons), and the text that sits on them. */
+  --hen: #ffd54a;
+  --egg: #7ec8e3;
+  --on-brand: #1d1a12;
+  /* Chart lines: darker steps of the same two hues, checked for contrast and colour blindness. */
+  --hen-mark: #c98500;
+  --egg-mark: #1b86b8;
+
+  --good-bg: #dcf3dc;
+  --good-ink: #0a6410;
+  --warn-bg: #ffefc2;
+  --warn-ink: #6f4a00;
+  --bad-bg: #fde0e0;
+  --bad-ink: #9e1f1f;
+  --plain-bg: #f3edd9;
+  --alarm-bg: #b3261e;
+  --alarm-ink: #ffffff;
+
+  --font-head: 'Fredoka', ui-rounded, 'Arial Rounded MT Bold', system-ui, sans-serif;
+  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --radius: 16px;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #17150f;
+    --card: #211e16;
+    --ink: #f5f0e1;
+    --ink-2: #c9c2ad;
+    --muted: #a39c86;
+    --hair: #36322a;
+    --line: #6b6350;
+    --shadow: #0a0906;
+    --edge: rgb(0 0 0 / 60%);
+    --glow: #2b2410;
+    --link: #8fd0f0;
+    --hen-mark: #c98500;
+    --egg-mark: #2f9bcf;
+    --good-bg: #163a1a;
+    --good-ink: #86e08a;
+    --warn-bg: #47370a;
+    --warn-ink: #ffd76b;
+    --bad-bg: #4a1b1b;
+    --bad-ink: #ffa0a0;
+    --plain-bg: #2e2a20;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #17150f;
+  --card: #211e16;
+  --ink: #f5f0e1;
+  --ink-2: #c9c2ad;
+  --muted: #a39c86;
+  --hair: #36322a;
+  --line: #6b6350;
+  --shadow: #0a0906;
+  --edge: rgb(0 0 0 / 60%);
+  --glow: #2b2410;
+  --link: #8fd0f0;
+  --hen-mark: #c98500;
+  --egg-mark: #2f9bcf;
+  --good-bg: #163a1a;
+  --good-ink: #86e08a;
+  --warn-bg: #47370a;
+  --warn-ink: #ffd76b;
+  --bad-bg: #4a1b1b;
+  --bad-ink: #ffa0a0;
+  --plain-bg: #2e2a20;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+}
+
+h1, h2, h3, p, ol, ul { margin: 0; }
+ol, ul { padding: 0; }
+
+h1, h2, h3 { font-family: var(--font-head); font-weight: 700; line-height: 1.1; text-wrap: balance; }
+h1 { font-size: clamp(2.3rem, 8vw, 4.2rem); letter-spacing: -0.01em; }
+h2 { font-size: clamp(1.6rem, 4.6vw, 2.2rem); }
+h3 { font-size: 1.25rem; }
+
+a { color: var(--link); text-underline-offset: 2px; }
+a:hover { text-decoration-thickness: 2px; }
+:focus-visible { outline: 3px solid var(--egg-mark); outline-offset: 2px; border-radius: 4px; }
+
+.wrap { width: 100%; max-width: 1120px; margin-inline: auto; padding-inline: 16px; }
+main.wrap { padding-block: 20px 72px; }
+section { margin-top: 60px; scroll-margin-top: 116px; }
+section.hero { margin-top: 26px; }
+section > h2 { margin-bottom: 8px; }
+section > .lede { margin-bottom: 20px; }
+#rules > h2 { margin-bottom: 20px; }
+.lede { color: var(--ink-2); max-width: 66ch; font-size: 1.05rem; text-wrap: pretty; }
+.sub-title { margin: 36px 0 14px; font-size: 1.4rem; }
+.muted { color: var(--muted); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.skip { position: absolute; left: -999px; top: 8px; z-index: 50; padding: 8px 14px; background: var(--card); border: 2px solid var(--line); border-radius: 10px; }
+.skip:focus { left: 16px; }
+
+/* Header: stays at the top; the fixture banner, when shown, rides above it. */
+.sticky-top { position: sticky; top: 0; z-index: 20; }
+.top { background: var(--bg); border-bottom: 2px solid var(--line); }
+.top-in { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; padding-block: 10px; }
+.brand { margin-right: auto; font-family: var(--font-head); font-weight: 700; font-size: 1.2rem; color: var(--ink); text-decoration: none; white-space: nowrap; }
+.nav { order: 3; width: 100%; display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; margin-inline: -8px; }
+.nav::-webkit-scrollbar { display: none; }
+.nav a { padding: 4px 9px; border-radius: 999px; color: var(--ink-2); font-weight: 600; font-size: .92rem; text-decoration: none; white-space: nowrap; }
+.nav a:hover { background: var(--plain-bg); color: var(--ink); }
+.theme-toggle { width: 40px; height: 40px; flex: none; border: 2px solid var(--line); border-radius: 50%; background: var(--card); font-size: 1.05rem; line-height: 1; cursor: pointer; box-shadow: 2px 2px 0 var(--shadow); }
+.theme-toggle:active { transform: translate(2px, 2px); box-shadow: none; }
+
+@media (min-width: 820px) {
+  .nav { order: 0; width: auto; margin-inline: 0; overflow: visible; }
+  section { scroll-margin-top: 84px; }
+}
+
+/* Banners */
+.fixture-banner {
+  padding: 10px 16px;
+  background: var(--alarm-bg);
+  background-image: repeating-linear-gradient(135deg, transparent 0 18px, rgb(0 0 0 / 14%) 18px 36px);
+  color: var(--alarm-ink);
+  text-align: center;
+  font-size: .92rem;
+  border-bottom: 2px solid var(--line);
+}
+.fixture-banner b { font-family: var(--font-head); font-size: 1.1rem; letter-spacing: .03em; }
+
+.replay-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--warn-bg);
+  color: var(--warn-ink);
+  border: 2px solid var(--line);
+  border-radius: 14px;
+  font-size: .92rem;
+}
+.replay-banner .chip { flex: none; margin-top: 1px; }
+
+.live-banner { background: var(--good-bg); color: var(--good-ink); }
+.frame-note { margin-top: 12px; font-size: .9rem; color: var(--ink-2); }
+
+/* Game switch: replay or live. Plain links, so each game has its own address. */
+.game-switch:empty { display: none; }
+.game-switch { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-bottom: 12px; }
+.switch-label { font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.switch { display: inline-flex; padding: 3px; gap: 3px; border: 2px solid var(--line); border-radius: 999px; background: var(--card); box-shadow: 2px 2px 0 var(--shadow); }
+.switch-opt { display: inline-flex; align-items: baseline; gap: 6px; padding: 4px 14px; border-radius: 999px; color: var(--ink-2); text-decoration: none; white-space: nowrap; font-size: .9rem; }
+.switch-opt b { font-family: var(--font-head); font-weight: 600; font-size: 1rem; color: var(--ink); }
+.switch-opt:hover { background: var(--plain-bg); }
+.switch-now, .switch-now:hover { background: var(--hen); color: var(--on-brand); }
+.switch-now b { color: var(--on-brand); }
+.switch-hint { font-size: .78rem; }
+
+/* Status line: where the numbers come from and how fresh they are. */
+.status { display: flex; align-items: center; gap: 8px; margin: 22px 0 10px; font-size: .82rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.status-dot { width: 9px; height: 9px; flex: none; border-radius: 50%; background: var(--muted); }
+.status-ok .status-dot { background: var(--good-ink); animation: pulse 2.4s ease-in-out infinite; }
+.status-warn { color: var(--warn-ink); }
+.status-warn .status-dot { background: var(--warn-ink); }
+.status-bad { color: var(--bad-ink); font-weight: 600; }
+.status-bad .status-dot { background: var(--bad-ink); }
+@keyframes pulse { 50% { opacity: .35; } }
+
+/* Footer */
+.foot { border-top: 2px solid var(--line); background: var(--card); }
+.foot-in { display: grid; grid-template-columns: 1fr; gap: 24px; padding-block: 28px 36px; }
+.foot-title { font-family: var(--font-head); font-weight: 700; font-size: 1.1rem; margin-bottom: 8px; }
+.contracts { list-style: none; display: grid; gap: 6px; font-size: .92rem; }
+.contracts a { font-family: var(--font-mono); font-size: .86rem; overflow-wrap: anywhere; }
+.foot-side { display: grid; gap: 8px; align-content: start; font-size: .95rem; }
+.foot-fine { color: var(--muted); font-size: .84rem; max-width: 48ch; }
+.noscript { margin: 24px 16px; padding: 14px; border: 2px solid var(--line); border-radius: 12px; background: var(--warn-bg); color: var(--warn-ink); }
+
+@media (min-width: 760px) {
+  .foot-in { grid-template-columns: 1.3fr 1fr; gap: 48px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
