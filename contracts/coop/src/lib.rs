@@ -11,6 +11,7 @@ mod coin;
 mod math;
 mod round;
 mod scouts;
+mod settle;
 #[cfg(test)]
 mod testing;
 

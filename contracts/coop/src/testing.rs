@@ -69,3 +69,18 @@ pub fn add_scout(coop: &mut Coop, name: &str) {
     ctx("funder.test", NearToken::from_near(1), 0);
     coop.register_scout(acc(name));
 }
+
+/// Plays the scouts' part of a round that opened `start` seconds after `T0`:
+/// every scout in `reports` seals and opens its prices, then `settler.test` settles.
+pub fn play_round(coop: &mut Coop, start: u64, reports: &[(&str, u128, u128)]) -> RoundResult {
+    for (scout, hen, egg) in reports {
+        ctx(scout, ZERO, start + 60);
+        coop.commit(seal_for(*hen, *egg, "salt", scout));
+    }
+    for (scout, hen, egg) in reports {
+        ctx(scout, ZERO, start + 90);
+        coop.reveal(U128(*hen), U128(*egg), "salt".to_string());
+    }
+    ctx("settler.test", ZERO, start + 120);
+    coop.settle()
+}
