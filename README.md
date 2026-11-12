@@ -125,6 +125,42 @@ The mistakes are on chain and we left them there. Six of the first 20 rounds are
 
 A void round mints and burns nothing and keeps the last good prices. The scouts report the missed day again in the next round, so no recorded day is skipped. After round 12 the scouts got a second RPC node, and after round 15 a limit of 20 seconds per request (`lib/near.mjs`).
 
+## Run it yourself
+
+You need Rust 1.95 or newer with the `wasm32-unknown-unknown` target, [cargo-near](https://github.com/near/cargo-near) and Node 24.
+
+```
+npm install
+npm test               # 15 tests of the reference model of the rules
+./scripts/build.sh     # builds both contracts
+cargo test             # 52 unit tests, then a full game and a gas test on a local NEAR sandbox
+npm run sim:supply     # 60 days of supply for six kinds of crowd
+npm run sim:swarm      # the scout swarm with scripted strategies, no LLM calls
+```
+
+To check the game on testnet you need no key and no account. This reads the chain and compares every settled round with `RULES.md` and with the recorded days:
+
+```
+node scripts/audit.mjs deploy/replay.json --replay
+```
+
+## What is in this repository
+
+| Path | What it is |
+|---|---|
+| [`RULES.md`](RULES.md) | The rules, the sequence diagram and the exact arithmetic. Written before the code. |
+| `contracts/token` | The NEP-141 coin. Only the coop can mint and burn. Deployed twice, as `$HEN` and `$EGG`. |
+| `contracts/coop` | The coordinator: rounds, roosts, sealed reports, slashing, the mint and burn log. |
+| `e2e/` | Full games on a local sandbox, and a gas test of `settle()` with 32 scouts. |
+| `sim/` | The simulation and a reference model of the rules in plain JavaScript. |
+| `swarm/` | The scout agents and the bot players that run against testnet. |
+| `scripts/` | Build, deploy, enrol scouts and players, drop the keys, audit. |
+| `deploy/` | The parameters of each game and a record of every transaction that set it up. |
+| `docs/` | [`SIMULATION.md`](docs/SIMULATION.md), [`INDEX.md`](docs/INDEX.md) (where the prices come from) |
+| [`AI_USAGE.md`](AI_USAGE.md) | What the AI coding agent did and what people decided. |
+
+Everything here was written during the hackathon. The one thing that existed before is our own price tracker and its archive of shop prices. It is not in this repository; only the daily aggregates made from it are. See [`docs/INDEX.md`](docs/INDEX.md).
+
 ## Licence
 
 MIT. See `LICENSE`.
