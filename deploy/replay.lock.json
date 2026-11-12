@@ -36,7 +36,19 @@
     "create scout-7.chickenoregg.testnet": "FLssqASyjkCWUs3FSTzA8D9xpWb8cfWqV4HDEpWMTqH3",
     "scout-7.chickenoregg.testnet posts its bond": "EBB3Z8N1U5uDjxU9u6nybHFcAod91GHLFRsei3w5Uanu",
     "scout-7.chickenoregg.testnet joins the coop": "3vsPV95GvhXEsJXC54C99sYi7UDhuizz1AHvUX2Vri1V",
-    "scout-7.chickenoregg.testnet gets its working key": "2s5EoKiqYC1aDa5XcscxSLnvxvXNYR1oVrkVcLgDrGLH"
+    "scout-7.chickenoregg.testnet gets its working key": "2s5EoKiqYC1aDa5XcscxSLnvxvXNYR1oVrkVcLgDrGLH",
+    "create henmaxi.chickenoregg.testnet": "6EWu14Td6G6HQYf7MUpCCqukAkCB4xVVTskMGgzvjbmv",
+    "henmaxi.chickenoregg.testnet claims its starter pack": "6m581wLSsJEwSKcj7jQyYGBREtnFTuCDGzHJp7UmeYUo",
+    "create eggmaxi.chickenoregg.testnet": "B8U59rqDphDRZzC9ueYAut45qfkLRDiPHRk8bEhxVWVA",
+    "eggmaxi.chickenoregg.testnet claims its starter pack": "7CpL4qeWAWHrxNMWw36j5HnzhBeWdVLK25QsSRsxs8Q6",
+    "create trendchaser.chickenoregg.testnet": "6YucQDzGr9QouSE6xJqcACMysym9CQ9KXZsh3NxiWsaQ",
+    "trendchaser.chickenoregg.testnet claims its starter pack": "GaTZiCtiCtux5xyU8aAUGzDghGRHSoPS4pXQnPyd8xdb",
+    "create contrarian.chickenoregg.testnet": "HGpWHfa3XshKUz1n6VFguhUjPSsTUyi8TFkpV4xYYmAJ",
+    "contrarian.chickenoregg.testnet claims its starter pack": "EiVvxvcZmU31oXRJWzaKxPXPRg7PvQYw2Hhw1Q412fRE",
+    "create coinflip.chickenoregg.testnet": "4rpFqCEfoCSC8pJSdWgYQJooU4MMEoniVcyjTzPfsZno",
+    "coinflip.chickenoregg.testnet claims its starter pack": "7qApe3aUqrYXBA7LHjwHnd82FicpqewYdoZHFNN1TBTF",
+    "create sharpbeak.chickenoregg.testnet": "HT4iEBN3ZVzqBTJXew1tZy9VdqLexaQpyxckrGwqruJA",
+    "sharpbeak.chickenoregg.testnet claims its starter pack": "Aoce6RBMLMxbEQC5Se5GQDfw17KxXQyA8jGq6eE6XxTG"
   },
   "home": "replay.chickenoregg.testnet",
   "hen": "hen.replay.chickenoregg.testnet",
@@ -50,5 +62,13 @@
     "scout-5.chickenoregg.testnet",
     "scout-6.chickenoregg.testnet",
     "scout-7.chickenoregg.testnet"
+  ],
+  "players": [
+    "henmaxi.chickenoregg.testnet",
+    "eggmaxi.chickenoregg.testnet",
+    "trendchaser.chickenoregg.testnet",
+    "contrarian.chickenoregg.testnet",
+    "coinflip.chickenoregg.testnet",
+    "sharpbeak.chickenoregg.testnet"
   ]
 }
