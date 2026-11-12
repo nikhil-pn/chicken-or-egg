@@ -45,11 +45,11 @@ function checkLine(state, supply) {
   const ft = state.ft;
   const coinsAgree = ft && log.hen === big(ft.hen) && log.egg === big(ft.egg);
   if (coop && coinsAgree) {
-    return h('p', { class: 'check' }, chip('good', '✓ Adds up'),
+    return h('p', { class: 'check' }, chip('good', 'Adds up'),
       ` The ${view.ledger_entries} lines of the log add up to exactly the supply that both coin contracts report (ft_total_supply).`);
   }
   if (coop && !ft) {
-    return h('p', { class: 'check' }, chip('good', '✓ Adds up'),
+    return h('p', { class: 'check' }, chip('good', 'Adds up'),
       ` The ${view.ledger_entries} lines of the log add up to exactly the supply the coop reports. The coin contracts did not answer yet.`);
   }
   return h('p', { class: 'check' }, chip('warn', 'Checking'),
@@ -93,15 +93,21 @@ export function renderSupply(state) {
     const st = view.stats;
     const supply = supplyByRound(state.ledger, last);
     const stats = h('div', { class: 'stats' },
-      stat('🐔 HEN supply now', coins(view.hen_supply), `${coins(st.minted_hen)} minted, ${coins(st.burned_hen)} fried`),
-      stat('🥚 EGG supply now', coins(view.egg_supply), `${coins(st.minted_egg)} minted, ${coins(st.burned_egg)} fried`));
+      stat('HEN supply now', coins(view.hen_supply), `${coins(st.minted_hen)} minted, ${coins(st.burned_hen)} fried`),
+      stat('EGG supply now', coins(view.egg_supply), `${coins(st.minted_egg)} minted, ${coins(st.burned_egg)} fried`));
     if (!view.ledger_entries) {
-      put(box, stats, empty('🥚', 'No coins exist yet',
+      put(box, stats, empty('egg', 'No coins exist yet',
         'Both coins start at zero. The chart starts when the first starter pack is claimed.'));
       return;
     }
     if (!supply) {
       put(box, stats, h('p', { class: 'loading' }, `Loading ${view.ledger_entries} lines of the log…`));
+      return;
+    }
+    if (supply.rounds.length < 2) {
+      put(box, stats, checkLine(state, supply), h('p', { class: 'fine' },
+        `Both coins started at zero; every coin so far came from starter packs in round ${supply.rounds[0]}. `
+        + 'A chart of the supply round by round starts here once a second round is under way.'));
       return;
     }
     const chartBox = box.querySelector('#chain-chart') || h('div', { id: 'chain-chart' });
