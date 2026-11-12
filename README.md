@@ -6,7 +6,7 @@
 > Tracks: Memecoins With Mechanics (`memecoins`) and AI Swarms (`swarms`).
 > Network: NEAR testnet only. Nothing here runs on mainnet.
 
-**Watch it live: [chickenoregg.vercel.app](https://chickenoregg.vercel.app)** (the replay of 107 recorded days) · [live game, one round a day](https://chickenoregg.vercel.app/?game=live). The page reads the chain straight from your browser.
+**Play it: [chickenoregg.vercel.app](https://chickenoregg.vercel.app)**. Pick chicken or eggs, pick an amount, bet. No wallet needed: "Play without a wallet" makes a testnet account in your browser and your first bet also claims the free starter pack. Or connect a NEAR testnet wallet. The [replay of 107 recorded days](https://chickenoregg.vercel.app/?game=replay) is there too. The page reads the chain straight from your browser.
 
 Two memecoins, **$HEN** and **$EGG**, settle the oldest argument on Earth, one round at a time.
 
@@ -130,6 +130,7 @@ Round 1 sets the baseline (13 Nov). Round 2 is the first one with a winner (14 N
 - **Many accounts.** Hatches and fries are in proportion to the coins roosted, so splitting coins over many accounts gains nothing. The starter pack is per account. One person with many accounts can take many packs; only the fee (0.1 NEAR) and the cap (100 packs) limit that.
 - **Shop prices move slowly.** Someone who watches the shelves closely will guess better than a coin flip. That is the game.
 - **One city, three shops.** The prices are real shelf prices from grocery delivery apps in Kochi, India. This is a real series, not a national statistic. The contract compares each price only with its own value in the last round, so the currency and the units drop out. See [`docs/INDEX.md`](docs/INDEX.md).
+- **Guests rely on the public testnet faucet.** "Play without a wallet" asks NEAR's testnet faucet for a new account and keeps its key in your browser's storage. Clear the storage and the account is gone. Use a wallet to keep it.
 - **The testnet game is a replay.** It plays 107 recorded days, one day about every 100 seconds, so anyone can check each round against `sim/data/daily-index.json`. The scouts read the recorded series, not the shops.
 - **The coop pays for its own storage.** Each round adds about 450 bytes to the contract (measured over rounds 11 to 20), which locks about 0.0045 NEAR. The coop pays this from its own balance. Anyone can send it more NEAR.
 - **NEAR has no timer.** A round moves on only when someone calls `settle()`. The scouts take turns, and anyone else may call it too.
