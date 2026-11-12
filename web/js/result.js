@@ -1,6 +1,6 @@
 // The last result, in one plain sentence.
 import { $, h, put, onChange, chip } from './dom.js';
-import { big, coins, near, moveWords, pricePer, plural, SIDE, other } from './format.js';
+import { big, coins, near, move, moveWords, pricePer, plural, SIDE, other } from './format.js';
 import { daysByRound, roundWhen } from './game.js';
 
 /** Ledger lines of one round, summed by kind: { hatch, scout_pay, fry } in base units. */
@@ -55,8 +55,8 @@ function payout(round, state) {
 }
 
 const OUTCOME_CHIP = {
-  hen: ['hen', '🐔 HEN came first'],
-  egg: ['egg', '🥚 EGG came first'],
+  hen: ['hen', 'HEN came first'],
+  egg: ['egg', 'EGG came first'],
   tie: ['tie', 'Tie'],
   void: ['void', 'Void round'],
   baseline: ['base', 'Starting prices'],
@@ -64,8 +64,21 @@ const OUTCOME_CHIP = {
 
 export function outcomeChip(outcome, short) {
   const [kind, label] = OUTCOME_CHIP[outcome] || ['plain', outcome];
-  const text = { hen: '🐔 HEN', egg: '🥚 EGG', tie: 'Tie', void: 'Void', baseline: 'Start' }[outcome] || outcome;
+  const text = { hen: 'HEN', egg: 'EGG', tie: 'Tie', void: 'Void', baseline: 'Start' }[outcome] || outcome;
   return chip(kind, short ? text : label);
+}
+
+/** The last result in one short line for the Play view: "Last round: chicken +1.2%, eggs −0.4%. HEN won." */
+export function lastLine(round, state) {
+  const unit = state.game.price;
+  const moves = `chicken ${move(round.hen_move_ppm)}, eggs ${move(round.egg_move_ppm)}`;
+  if (round.outcome === 'hen' || round.outcome === 'egg') return `Last round: ${moves}. ${SIDE[round.outcome].coin} won.`;
+  if (round.outcome === 'tie') return `Last round: ${moves}. Too close to call: a tie.`;
+  if (round.outcome === 'baseline') {
+    return `Last round set the starting prices: chicken ${pricePer(round.hen_price, unit, 'hen')}, eggs ${pricePer(round.egg_price, unit, 'egg')}.`;
+  }
+  if (round.outcome === 'void') return 'Last round was void: too few scouts opened a report, so nothing changed.';
+  return `Last round: ${round.outcome}.`;
 }
 
 export function renderResult(state) {
