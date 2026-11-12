@@ -15,9 +15,9 @@ const HEADS = [
 
 function roost(player, round) {
   if (!player.roost) return h('span', { class: 'muted' }, 'Not roosting');
-  const side = SIDE[player.roost.side] || { emoji: '', coin: String(player.roost.side).toUpperCase() };
+  const side = SIDE[player.roost.side] || { coin: String(player.roost.side).toUpperCase() };
   const now = round && player.roost.round === round.id;
-  return h('span', null, `${side.emoji} ${coins(player.roost.amount)} ${side.coin} `,
+  return h('span', null, `${coins(player.roost.amount)} ${side.coin} `,
     now ? chip(player.roost.side, 'this round') : chip('plain', `round ${player.roost.round}`));
 }
 
@@ -33,7 +33,7 @@ export function renderPlayers(state) {
   const listed = state.game.players;
   const joined = state.stats ? state.stats.stats.players : null;
   if (!listed.length) {
-    onChange(box, ['none', joined], () => put(box, empty('🏆', 'No players are listed for this game yet',
+    onChange(box, ['none', joined], () => put(box, empty('hen', 'No players are listed for this game yet',
       joined === null ? 'The leaderboard shows up when player accounts are listed for this game.'
         : `${plural(joined, 'account')} joined the coop so far. The leaderboard shows up when player accounts are listed for this game.`)));
     return;
