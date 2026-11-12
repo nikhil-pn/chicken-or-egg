@@ -48,7 +48,10 @@
     "create coinflip.chickenoregg.testnet": "4rpFqCEfoCSC8pJSdWgYQJooU4MMEoniVcyjTzPfsZno",
     "coinflip.chickenoregg.testnet claims its starter pack": "7qApe3aUqrYXBA7LHjwHnd82FicpqewYdoZHFNN1TBTF",
     "create sharpbeak.chickenoregg.testnet": "HT4iEBN3ZVzqBTJXew1tZy9VdqLexaQpyxckrGwqruJA",
-    "sharpbeak.chickenoregg.testnet claims its starter pack": "Aoce6RBMLMxbEQC5Se5GQDfw17KxXQyA8jGq6eE6XxTG"
+    "sharpbeak.chickenoregg.testnet claims its starter pack": "Aoce6RBMLMxbEQC5Se5GQDfw17KxXQyA8jGq6eE6XxTG",
+    "hen.replay.chickenoregg.testnet drops key 7mWRPLns": "8MX8ug3M1UBBNCNLdZSDkWR5S4jHCGRpAqgYfj3y5oyQ",
+    "egg.replay.chickenoregg.testnet drops key 6nXka4Cm": "EXdBZouXNZhQhqtNeMYVJjsVFwbvFVWNXJW7rdrxzvby",
+    "coop.replay.chickenoregg.testnet drops key DrvTKW62": "5pP5KKgDGVGbHjRRoMYuTN3EPtq4Ctg5PjZRKXD9uWxv"
   },
   "home": "replay.chickenoregg.testnet",
   "hen": "hen.replay.chickenoregg.testnet",
@@ -70,5 +73,6 @@
     "contrarian.chickenoregg.testnet",
     "coinflip.chickenoregg.testnet",
     "sharpbeak.chickenoregg.testnet"
-  ]
+  ],
+  "locked": true
 }
