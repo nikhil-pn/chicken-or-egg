@@ -2,20 +2,15 @@
 // Usage: node scripts/deploy.mjs deploy/replay.json
 // Safe to run again: accounts and contracts that already exist are left alone.
 import { actions } from 'near-api-js';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
-import { NEAR, TGAS, accountExists, call, loadAccount, newKey, provider, txLink } from '../lib/near.mjs';
+import { readFileSync } from 'node:fs';
+import { NEAR, TGAS, accountExists, call, loadAccount, newKey, provider } from '../lib/near.mjs';
+import { openRecord } from '../lib/record.mjs';
 import { parseAmount, withAmounts } from '../lib/units.mjs';
 
 const file = process.argv[2];
 if (!file) throw new Error('Usage: node scripts/deploy.mjs deploy/<game>.json');
 const plan = JSON.parse(readFileSync(file, 'utf8'));
-const lockFile = file.replace(/\.json$/, '.lock.json');
-const lock = existsSync(lockFile) ? JSON.parse(readFileSync(lockFile, 'utf8')) : { txs: {} };
-const note = (step, result) => {
-  lock.txs[step] = result.transaction.hash;
-  writeFileSync(lockFile, JSON.stringify(lock, null, 2) + '\n');
-  console.log(`${step}: ${txLink(result.transaction.hash)}`);
-};
+const { file: lockFile, data: lock, note } = openRecord(file);
 
 const home = plan.home;
 const ids = { hen: `hen.${home}`, egg: `egg.${home}`, coop: `coop.${home}` };
