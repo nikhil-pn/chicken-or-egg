@@ -16,6 +16,16 @@ const SIDES = [
 ];
 
 const has = (name, word) => name.includes(word.toLowerCase());
+const pause = (ms) => new Promise((done) => setTimeout(done, ms));
+
+/** The apps sometimes answer a search with no products at all, so an empty answer is asked again. */
+async function searchOnce(search, query, tries = 3) {
+  for (let i = 1; ; i += 1) {
+    const result = await search(query);
+    if (result.products?.length || i >= tries) return result;
+    await pause(5000 * i);
+  }
+}
 
 /** The tracker's filter rules for one watch, applied to one product. */
 function fits(p, m) {
@@ -57,12 +67,13 @@ export async function readShelf(dir = process.env.TRACKER_DIR, log = () => {}) {
     let packs = 0;
     try {
       session = open[platform] ? await open[platform](KOCHI) : null;
+      const search = session ? (q) => session.search(q) : (q) => blinkit.fetchBlinkit(q, KOCHI);
       const searches = new Map();
       for (const w of watches.filter((w) => w.platform === platform)) {
         const feeds = SIDES.find(({ watch }) => watch.test(w.id));
         if (!feeds) continue;
         if (!searches.has(w.query)) {
-          searches.set(w.query, session ? await session.search(w.query) : await blinkit.fetchBlinkit(w.query, KOCHI));
+          searches.set(w.query, await searchOnce(search, w.query));
         }
         const hits = topBrands(searches.get(w.query).products.filter((p) => fits(p, w.match)), w.match.topBrands);
         for (const p of hits) {
