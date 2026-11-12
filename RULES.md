@@ -22,6 +22,7 @@ Coins you do not roost are never touched.
 | Scout | An agent with its own NEAR account that reports prices. |
 | Bond | NEAR locked for a scout. Part of it is taken when the scout lies or goes silent. |
 | Pot | NEAR taken from bad scouts and from starter-pack fees. It is paid to honest scouts. |
+| Nest | Your coins resting in the coop after a round settles. Roost them again or claim them. |
 
 ## One round
 
@@ -65,12 +66,12 @@ For each price the coop takes the **middle value** (median) of the revealed repo
 With an even number of reports it is the average of the two middle values.
 
 ```
-hen_move = (hen_now - hen_last) * 10000 / hen_last      (basis points, can be negative)
-egg_move = (egg_now - egg_last) * 10000 / egg_last
+hen_move = (hen_now - hen_last) * 1000000 / hen_last    (parts per million, can be negative)
+egg_move = (egg_now - egg_last) * 1000000 / egg_last
 
-|hen_move - egg_move| <  tie_bps   ->  TIE
-hen_move > egg_move                ->  HEN came first
-otherwise                          ->  EGG came first
+|hen_move - egg_move| <  tie_bps * 100   ->  TIE     (one basis point is 100 parts per million)
+hen_move > egg_move                      ->  HEN came first
+otherwise                                ->  EGG came first
 ```
 
 Only the *change* matters, so the currency and the pack size cancel out. Scouts report whole numbers
@@ -88,12 +89,17 @@ Special rounds:
 | HEN or EGG wins | grows by `hatch_bps` (new mint) | shrinks by `fry_bps` (burned) | share `scout_pay` of the winning coin (new mint) |
 | Tie, baseline, void | unchanged | unchanged | nothing minted |
 
-After a round settles, `claim()` sends your roost (grown, shrunk or unchanged) back to your wallet.
-Roosting again also collects any earlier roost for you.
+After a round settles, your roost (grown, shrunk or unchanged) rests in your **nest** inside the coop.
+`claim()` sends the whole nest to your wallet. `roost(side, amount)` puts nest coins straight into the open round,
+with no trip through the wallet.
+
+- **One side per round.** You may add to your roost while the roost phase is open, but not back both coins.
+- **Join once.** The coop keeps one small record per player. `claim_starter()` creates it; without a starter pack,
+  `join()` with 0.01 NEAR does. Coins sent by an account with no record are refused and go straight back.
 
 Both coins start with a **supply of zero**. There is no team allocation and no presale. Coins exist only through:
 
-- the **starter pack**: once per account, `starter_hen` + `starter_egg`, for a fee of `starter_fee` NEAR, until `starter_cap` packs are gone;
+- the **starter pack**: once per account, `starter_hen` + `starter_egg`, for a fee of `starter_fee` NEAR, until `starter_cap` packs are gone. The fee, less the storage the new player uses, goes to the pot. So does anything paid above the fee;
 - **hatches** and **scout pay**.
 
 Coins leave only by being **fried**.
@@ -103,9 +109,11 @@ Coins leave only by being **fried**.
 - **Anyone may add a scout**: `register_scout(scout_id)` with at least `scout_bond` NEAR attached. The payer is recorded as the scout's funder. At most `max_scouts` scouts.
 - A scout account needs only a **function-call key** that may call `commit`, `reveal` and `settle` on the coop and nothing else. That key cannot move money. If it leaks, the worst outcome is that the scout's own bond is slashed.
 - A scout is **honest** in a round when both of its prices are within `tolerance_bps` of the middle values.
-- A scout is **slashed** `slash_bps` of its bond when it reveals a price outside the tolerance, or seals a report and never reveals it.
+- A report is two whole numbers from 1 to 10^12 and a salt of at most 64 characters. A scout may replace its seal until the commit phase ends.
+- A scout is **slashed** `slash_bps` of its bond when it reveals a price outside the tolerance, or seals a report and never reveals it. The second case is slashed in void rounds too.
 - Slashed NEAR goes to the **pot**. When a round settles with at least one honest scout, the whole pot is split equally between that round's honest scouts.
 - A scout whose bond has fallen below `min_bond` is **benched**: it cannot commit until someone tops it up with `top_up_scout`.
+- The funder calls `collect_scout` to receive the NEAR a scout won from the pot. The coins it won move to the funder's nest.
 - The funder may `retire_scout` during a roost phase and receives the remaining bond plus the scout's unpaid earnings.
 
 All scouts compute the **same published index** from the same public shop shelves (see `docs/INDEX.md`), so honest scouts land close together. A scout far from the middle is wrong or lying.
@@ -151,4 +159,5 @@ The values are chosen from the supply simulation in `sim/` and recorded in the R
 - **We run the first scouts.** At launch they run on our machine. Registration is open, but until others join the result rests on us reading the shelves honestly.
 - **Sybil accounts.** Hatches and fries are proportional to the coins roosted, so splitting coins across many accounts gains nothing. The starter pack is per account: one person with many accounts can take many packs, limited only by the fee and the cap.
 - **Shop prices are sticky.** Someone who watches the shelves closely will guess better than a coin flip. That is the game.
+- **Storage is paid by the coop.** Every round adds one result and a few log lines to the contract, about 1 NEAR per 100 kB. The coop pays this from its own balance, which is funded at launch. Anyone can send it more NEAR; nobody can take NEAR out except scouts collecting what they won.
 - **No timer on NEAR.** A round moves on only when somebody calls `settle`. Scouts are allowed to, and so is anyone else.
