@@ -209,6 +209,7 @@ The runners that play the games are `swarm/run.mjs` (scouts) and `swarm/play.mjs
 | `e2e/` | Full games on a local sandbox, and a gas test of `settle()` with 32 scouts. |
 | `sim/` | The simulation and a reference model of the rules in plain JavaScript. |
 | `swarm/` | The scout agents and the bot players that run against testnet. |
+| `AGENTS.md`, `CLAUDE.md` | The short path for AI reviewers: accounts, commands and what each should print. |
 | `scripts/` | Build, deploy, enrol scouts and players, drop the keys, audit. |
 | `deploy/` | The parameters of each game and a record of every transaction that set it up. |
 | `docs/` | [`SIMULATION.md`](docs/SIMULATION.md), [`INDEX.md`](docs/INDEX.md) (where the prices come from), [`REQUIREMENTS.md`](docs/REQUIREMENTS.md) (both track prompts, line by line), [`TRACKS.md`](docs/TRACKS.md) |
