@@ -45,6 +45,51 @@ impl Coop {
         }
     }
 
+    /// Mints the starter pack to the caller: once per account, until `starter_cap`
+    /// packs are gone. The fee, less storage, goes to the scouts' pot.
+    #[payable]
+    pub fn claim_starter(&mut self) {
+        let account = env::predecessor_account_id();
+        let fee = env::attached_deposit();
+        require!(fee >= self.config.starter_fee, "Attach the starter fee");
+        require!(self.stats.starters_claimed < self.config.starter_cap, "All starter packs are gone");
+        let is_new = !self.players.contains_key(&account);
+        let mut player = self.players.get(&account).cloned().unwrap_or_default();
+        require!(!player.has_starter, "One starter pack per account");
+        player.has_starter = true;
+        self.players.insert(account.clone(), player);
+        if is_new {
+            self.stats.players += 1;
+        }
+        self.stats.starters_claimed += 1;
+        let kept = PLAYER_STORAGE.saturating_add(COIN_STORAGE.saturating_mul(2));
+        self.pot += fee.saturating_sub(kept).as_yoctonear();
+
+        let (id, now) = (self.round.id, env::block_timestamp());
+        for (coin, amount) in [(Side::Hen, self.config.starter_hen), (Side::Egg, self.config.starter_egg)] {
+            if amount.0 == 0 {
+                continue;
+            }
+            match coin {
+                Side::Hen => self.stats.minted_hen.0 += amount.0,
+                Side::Egg => self.stats.minted_egg.0 += amount.0,
+            }
+            self.ledger.push(LogEntry {
+                round: id,
+                kind: LogKind::Starter,
+                coin,
+                amount,
+                account: Some(account.clone()),
+                at: now,
+            });
+            ext_coin::ext(self.token(coin))
+                .with_attached_deposit(COIN_STORAGE)
+                .with_static_gas(STARTER_MINT_GAS)
+                .mint(account.clone(), amount, Some("starter pack".to_string()))
+                .detach();
+        }
+    }
+
     /// NEP-141 hook. `ft_transfer_call` on a coin with `msg` set to `roost` locks
     /// the coins on that coin's side: $HEN backs the hen, $EGG backs the egg.
     /// A refused roost panics, and the coin contract then returns the coins.
@@ -386,5 +431,57 @@ mod tests {
         // A transfer that went through changes nothing.
         coop.on_coins_sent(acc(ALICE), Side::Hen, U128(103 * COIN), Ok(()));
         assert_eq!(player(&coop, ALICE).nest_hen.0, 103 * COIN);
+    }
+
+    fn starter(coop: &mut Coop, who: &str) {
+        ctx(who, NearToken::from_millinear(100), 5);
+        coop.claim_starter();
+    }
+
+    #[test]
+    fn the_starter_pack_mints_both_coins_and_feeds_the_pot() {
+        let mut coop = new_coop();
+        starter(&mut coop, ALICE);
+        assert_eq!((coop.stats.minted_hen.0, coop.stats.minted_egg.0), (1000 * COIN, 1000 * COIN));
+        assert_eq!((coop.stats.starters_claimed, coop.stats.players), (1, 1));
+        assert_eq!(coop.ledger.len(), 2);
+        // 0.1 NEAR fee, less 0.01 for the record and 2 x 0.00125 for the two coin accounts.
+        assert_eq!(coop.pot, NearToken::from_micronear(87_500).as_yoctonear());
+        assert!(player(&coop, ALICE).has_starter);
+        // The coins go straight to the player's wallet, not to the nest.
+        assert_eq!(player(&coop, ALICE).nest_hen.0, 0);
+    }
+
+    #[test]
+    fn a_player_who_joined_first_still_gets_one_pack() {
+        let mut coop = new_coop();
+        join(&mut coop, ALICE);
+        starter(&mut coop, ALICE);
+        assert_eq!((coop.stats.starters_claimed, coop.stats.players), (1, 1));
+    }
+
+    #[test]
+    #[should_panic(expected = "One starter pack per account")]
+    fn one_starter_pack_per_account() {
+        let mut coop = new_coop();
+        starter(&mut coop, ALICE);
+        starter(&mut coop, ALICE);
+    }
+
+    #[test]
+    #[should_panic(expected = "All starter packs are gone")]
+    fn the_starter_packs_run_out() {
+        let mut coop = new_coop();
+        for who in [ALICE, BOB, "carol.test", "dave.test"] {
+            starter(&mut coop, who);
+        }
+    }
+
+    #[test]
+    #[should_panic(expected = "Attach the starter fee")]
+    fn the_starter_pack_has_a_fee() {
+        let mut coop = new_coop();
+        ctx(ALICE, NearToken::from_millinear(99), 5);
+        coop.claim_starter();
     }
 }
