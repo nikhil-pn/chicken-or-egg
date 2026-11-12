@@ -92,21 +92,31 @@ for (const [side, coin] of [['hen', hen], ['egg', egg]]) {
 
 // 4. Replay only: each round with prices is the next recorded day.
 let days = null;
+const afterReplay = {};
 if (process.argv.includes('--replay')) {
-  const { pricesOf, truths } = await import('../swarm/replay.mjs');
+  const { DAYS, pricesOf, truths } = await import('../swarm/replay.mjs');
   const truth = truths(config.tie_bps);
-  decided.forEach((r, day) => {
+  const played = decided.slice(0, DAYS);
+  played.forEach((r, day) => {
     const want = pricesOf(day);
     check(B(r.hen_price) === want.hen && B(r.egg_price) === want.egg, `round ${r.id}: prices differ from ${want.date}`);
     check(r.outcome.toUpperCase() === truth[day], `round ${r.id}: ${r.outcome}, the record says ${truth[day]}`);
   });
-  days = decided.length;
+  days = played.length;
+  // Anyone may still call settle() after the last recorded day. Those rounds are not part of the replay.
+  if (played.length === DAYS) {
+    for (const r of history.filter((r) => r.id > played[DAYS - 1].id)) {
+      tally[r.outcome] -= 1;
+      afterReplay[r.outcome] = (afterReplay[r.outcome] ?? 0) + 1;
+    }
+  }
 }
 
 const report = {
   coop, checked_at_round: round.id, rounds_settled: history.length, log_lines: ledger.length,
   ...(days === null ? {} : { recorded_days_played: days }),
   outcomes: tally,
+  ...(Object.keys(afterReplay).length ? { after_the_last_recorded_day: afterReplay } : {}),
   supply: { hen: show(supply.hen, 18, 2), egg: show(supply.egg, 18, 2) },
   minted: { hen: show(logged.hen.in, 18, 2), egg: show(logged.egg.in, 18, 2) },
   burned: { hen: show(logged.hen.out, 18, 2), egg: show(logged.egg.out, 18, 2) },
