@@ -1,18 +1,26 @@
-// The rules in four steps, and every parameter read live from get_config.
-import { $, h, put, onChange, table, row, chip } from './dom.js';
+// How it works (four steps and a few words), and the On chain view: the lock, every parameter, the contracts.
+import { $, h, put, onChange, table, row } from './dom.js';
 import { coins, near, bps, acct, plural, duration } from './format.js';
+import { sticker } from './stickers.js';
 
 function steps(config) {
   const secs = (n) => (config ? ` (${duration(config[n])})` : '');
   const pct = (n) => (config ? bps(config[n]) : 'a fixed share');
   return [
-    ['🪺', 'Roost', `Pick a side. Lock some $HEN or some $EGG in the coop before roosting closes${secs('roost_secs')}. One side per round.`],
-    ['🔒', 'Seal', `Scout agents read the real shop prices of chicken and eggs. Each one sends a sealed report${secs('commit_secs')}, so no scout can copy another.`],
-    ['👀', 'Open', `The scouts open their reports${secs('reveal_secs')}. The coop takes the middle price of each. A scout far from the middle loses part of its bond.`],
-    ['🐣', 'Settle', `The price that rose more (or fell less) since the last round came first. Winners hatch: their roost grows by ${pct('hatch_bps')}. `
-      + `Losers get fried: ${pct('fry_bps')} of their roost burns. A tie changes nothing.`],
+    ['coin-hen', 'Bet', `Pick a side: $HEN for chicken, $EGG for eggs. Your coins rest in the coop (they roost) until betting closes${secs('roost_secs')}. One side per round.`],
+    ['scout', 'Scouts read the shelves', `Scout agents read the real shop prices of chicken and eggs, and each sends a sealed report${secs('commit_secs')}, so no scout can copy another.`],
+    ['seal', 'Reports open', `The scouts open their reports${secs('reveal_secs')}. The coop takes the middle price of each. A scout far from the middle loses part of its bond.`],
+    ['chick', 'Hatch or fry', `The price that rose more (or fell less) since the last round wins. Winners hatch: +${pct('hatch_bps')}. `
+      + `Losers get fried: ${pct('fry_bps')} of their bet burns. A tie changes nothing.`],
   ];
 }
+
+const WORDS = [
+  ['chick', 'Hatch', 'New coins minted for the winners.'],
+  ['fried', 'Fry', 'The share of a losing bet that burns.'],
+  ['nest', 'Nest', 'Your coins resting in the coop after a round. Bet them again or cash out.'],
+  ['coin-egg', 'Starter pack', 'Once per account: 1,000 $HEN + 1,000 $EGG. Both coins start at zero; no team coins, no presale.'],
+];
 
 const HEADS = [{ label: 'Parameter' }, { label: 'Value' }, { label: 'What it does' }];
 
@@ -52,39 +60,44 @@ function lockLine(state) {
   const accounts = [game.coop, game.hen, game.egg];
   const base = 'These values were set when the coop was created, and the contract has no method that changes them. ';
   if (!keys || accounts.some((a) => !keys[a])) {
-    return h('p', { class: 'lock' }, chip('plain', 'Checking keys'), ' ', base,
-      'The access keys of the contract accounts have not been read yet.');
+    return lockBox('lock', 'seal', 'Checking the keys…', base, 'The access keys of the contract accounts have not been read yet.');
   }
   const open = accounts.filter((a) => keys[a].full > 0);
   if (!open.length) {
     const none = accounts.every((a) => keys[a].total === 0);
-    return h('p', { class: 'lock lock-ok' }, chip('good', '✓ No admin key'), ' ', base,
-      `The three contract accounts hold ${none ? 'no access keys at all' : 'no full-access key'} (read from the chain by this page), `
-      + 'so no account can change the parameters or replace the code. Check it on the explorer: ',
+    return lockBox('lock lock-ok', 'seal', 'No admin key. Every parameter was fixed at launch.', base,
+      `The three contract accounts hold ${none ? 'no access keys at all' : 'no full-access key'} (read from the chain by this page just now), `
+      + 'so nobody can change the parameters or replace the code. Check it on the explorer: ',
       accounts.map((a, i) => [i ? ', ' : '', acct(a)]), '.');
   }
-  return h('p', { class: 'lock lock-open' }, chip('warn', 'Not locked yet'), ' ', base,
-    `Not locked yet: ${plural(open.length, 'contract account')} still ${open.length === 1 ? 'holds' : 'hold'} a full-access key (`,
+  return lockBox('lock lock-open', 'seal', 'Not locked yet', base,
+    `${plural(open.length, 'contract account')} still ${open.length === 1 ? 'holds' : 'hold'} a full-access key (`,
     open.map((a, i) => [i ? ', ' : '', acct(a)]),
     '). A full-access key could replace the contract code. This line is read from the chain and updates itself.');
 }
 
+const lockBox = (cls, art, title, ...text) => h('div', { class: cls }, sticker(art, { size: 'lg', tilt: -8 }),
+  h('div', null, h('p', { class: 'lock-title' }, title), h('p', null, ...text)));
+
 export function renderRules(state) {
   const list = $('rules-steps');
-  onChange(list, [state.config], () => put(list, steps(state.config).map(([emoji, title, text], i) =>
-    h('li', { class: 'rule' },
-      h('span', { class: 'rule-emoji', 'aria-hidden': 'true' }, emoji),
+  onChange(list, [state.config], () => put(list, steps(state.config).map(([art, title, text], i) =>
+    h('li', { class: 'rule' }, sticker(art, { size: 'lg', tilt: i % 2 ? 6 : -6 }),
       h('div', null, h('p', { class: 'rule-title' }, `${i + 1}. ${title}`), h('p', { class: 'rule-text' }, text))))));
+  const words = $('words');
+  onChange(words, ['words'], () => put(words, WORDS.map(([art, word, text]) =>
+    h('p', { class: 'word' }, sticker(art, { size: 'sm' }), h('span', null, h('b', null, word), text)))));
 
   if (state.missing) return; // the not-started notice fills the table's place
+  const lock = $('lock-body');
+  onChange(lock, [state.keys, state.game.coop], () => put(lock, lockLine(state)));
   const box = $('params-body');
   if (!state.config) {
     onChange(box, ['wait', state.error], () => put(box, h('p', { class: 'loading' }, 'Reading the parameters from the chain…')));
     return;
   }
-  onChange(box, [state.config, state.keys, state.meta, state.stats && state.stats.stats.starters_claimed], () => {
+  onChange(box, [state.config, state.meta, state.stats && state.stats.stats.starters_claimed], () => {
     put(box,
-      lockLine(state),
       table('Parameters of the coop, read from get_config', HEADS, params(state).map((cells) => row(cells, HEADS)), true),
       h('p', { class: 'fine' }, 'Read live from ', h('code', null, 'get_config'), ' on ', acct(state.game.coop),
         '. Coins you do not roost are never touched.'));
