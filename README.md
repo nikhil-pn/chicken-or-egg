@@ -104,6 +104,23 @@ near contract call-function as-read-only coop.replay.chickenoregg.testnet get_sc
 
 Every transaction of the launch is listed in [`deploy/replay.lock.json`](deploy/replay.lock.json).
 
+### The live game: one round a day
+
+A second coop plays real days instead of recorded ones. It started on 12 Nov 2026 and runs through judging. The same seven scouts and six bot players are in it.
+
+| Account | What it is |
+|---|---|
+| [`coop.chickenoregg.testnet`](https://testnet.nearblocks.io/address/coop.chickenoregg.testnet) | The live coop. Roost 12 h, commit 11 h, reveal 1 h. Every other parameter is the same as the replay. |
+| [`hen.chickenoregg.testnet`](https://testnet.nearblocks.io/address/hen.chickenoregg.testnet) · [`egg.chickenoregg.testnet`](https://testnet.nearblocks.io/address/egg.chickenoregg.testnet) | Its $HEN and $EGG. |
+
+| Claim | Proof |
+|---|---|
+| Deployed with every parameter in one `new` call | [coop](https://testnet.nearblocks.io/txns/CbxQTQfVkpewFXTPxzg1fvTYYuAWGNqPXVFhb8UKFM4A) · [$HEN](https://testnet.nearblocks.io/txns/2xip4aaMfEwMo1ddVH8aZ6eA5TWXb2pzq35ftBayU6LC) · [$EGG](https://testnet.nearblocks.io/txns/49iihWd9LNSctjZebnuAH1HZnLZivSZNeEFagbEzenzh) |
+| Nobody holds a key to it | last key deleted: [coop](https://testnet.nearblocks.io/txns/BrJS2eaGvT5G428dvKxmf8pewatJCKzaUUWEA3KxEJoL) · [$HEN](https://testnet.nearblocks.io/txns/27Yey6TLx19X6Ff8BcDdpZ5VJxks2RfLnq9xwrpSDu8m) · [$EGG](https://testnet.nearblocks.io/txns/9Q4oBiFKrkm9HHF6PtfBN4ecJqf7x6FdT5Z8KtbMxaQY) |
+| Same code as the replay | both coops report code hash `69tGTYT1znsLCzYj98SFBiZec6peQJTJ2frDPCJG2Xik`, both $HEN coins `DzJ6HiyqRBFEmxw7anRvzw6LQf7xNjJdKFwkxUfYahRF` |
+
+Round 1 sets the baseline (13 Nov). Round 2 is the first one with a winner (14 Nov). How the shelves are read: [`docs/INDEX.md`](docs/INDEX.md#the-live-game). Every transaction: [`deploy/live.lock.json`](deploy/live.lock.json).
+
 ## Limits, stated plainly
 
 - **A majority of scouts can lie together.** The middle value is safe only while fewer than half of the reporting scouts collude. Anyone can join as a scout for one bond, so an attack costs about (N/2 + 1) bonds. With real money the bond must be far larger than what one round can move.
