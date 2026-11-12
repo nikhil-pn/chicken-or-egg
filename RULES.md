@@ -107,7 +107,7 @@ Coins leave only by being **fried**.
 ## Scouts
 
 - **Anyone may add a scout**: `register_scout(scout_id)` with at least `scout_bond` NEAR attached. The payer is recorded as the scout's funder. At most `max_scouts` scouts.
-- A scout account needs only a **function-call key** that may call `commit`, `reveal` and `settle` on the coop and nothing else. That key cannot move money. If it leaks, the worst outcome is that the scout's own bond is slashed.
+- A scout account needs only a **function-call key** that may call `commit`, `reveal`, `settle` and `collect_scout` on the coop and nothing else. That key cannot send money anywhere: `collect_scout` only pays the scout's own funder. If it leaks, the worst outcome is that the scout's own bond is slashed.
 - A scout is **honest** in a round when both of its prices are within `tolerance_bps` of the middle values.
 - A report is two whole numbers from 1 to 10^12 and a salt of at most 64 characters. A scout may replace its seal until the commit phase ends.
 - A scout is **slashed** `slash_bps` of its bond when it reveals a price outside the tolerance, or seals a report and never reveals it. The second case is slashed in void rounds too.
