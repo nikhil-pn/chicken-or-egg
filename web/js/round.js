@@ -1,209 +1,133 @@
-// The hero: the open round (phase, countdown, split bar) and the three score tiles.
-import { $, h, put, onChange, chip } from './dom.js';
-import { big, coins, mmss, plural, stamp, SIDE } from './format.js';
+// The open round in plain words: phase, countdown, and when each step happens on the viewer's clock.
+import { $, h, put, onChange } from './dom.js';
+import { mmss, stamp, plural } from './format.js';
 import { openDay, dayText } from './game.js';
 
 const PHASES = ['roost', 'commit', 'reveal', 'settle'];
-const PHASE_NAME = { roost: 'Roost', commit: 'Commit', reveal: 'Reveal', settle: 'Settle' };
-const COUNT_LABEL = {
-  roost: 'Roosting closes in',
-  commit: 'Sealing ends in',
-  reveal: 'Reveal ends in',
-  settle: 'Waiting for settle',
-};
 
 /**
- * Phase and seconds left right now. The chain is asked every few seconds;
- * between answers the page counts down by itself from the last answer.
+ * Phase and seconds left right now, plus the seconds since the round opened and the phase ends.
+ * The chain is asked every few seconds; between answers the page counts down by itself.
  */
 export function localClock(state) {
   const { round, config } = state;
   if (!round) return null;
   const at = PHASES.indexOf(round.phase);
-  if (!config || at < 0 || at > 2) return { phase: round.phase, left: Number(round.seconds_left) || 0 };
+  if (!config || at < 0 || at > 2) return { phase: round.phase, left: Number(round.seconds_left) || 0, elapsed: null, ends: null };
   const ends = [config.roost_secs, config.roost_secs + config.commit_secs,
     config.roost_secs + config.commit_secs + config.reveal_secs];
   const elapsed = ends[at] - Number(round.seconds_left) + (Date.now() - state.roundAt) / 1000;
   for (let i = 0; i < 3; i++) {
-    if (elapsed < ends[i]) return { phase: PHASES[i], left: Math.ceil(ends[i] - elapsed) };
+    if (elapsed < ends[i]) return { phase: PHASES[i], left: Math.ceil(ends[i] - elapsed), elapsed, ends };
   }
-  return { phase: 'settle', left: 0 };
+  return { phase: 'settle', left: 0, elapsed, ends };
 }
 
-/** True while the scouts of a daily game are due to read the shelves (the end of the commit phase). */
-const reading = (state, now) => now.phase === 'commit' && state.game.read_before_commit_end_secs > 0
-  && now.left <= state.game.read_before_commit_end_secs;
-
-function phaseSentence(phase, round, state, now) {
-  const scouts = round.scouts;
-  if (phase === 'roost') return 'Roosting is open. Players lock $HEN or $EGG on their side. Scouts wait.';
-  if (phase === 'commit' && state.game.read_before_commit_end_secs > 0 && !reading(state, now)) {
-    return `Roosting is closed. The scouts read today's shop shelves about ${Math.round(state.game.read_before_commit_end_secs / 60)} `
-      + `minutes before sealing ends, then seal their reports: ${round.commits} of ${scouts} sealed.`;
-  }
-  if (phase === 'commit') {
-    return `Roosting is closed. Scouts read the shop prices and seal their reports: ${round.commits} of ${scouts} sealed.`;
-  }
-  if (phase === 'reveal') return `Scouts open their sealed reports: ${round.reveals} of ${round.commits} opened.`;
-  if (scouts === 0) return 'Time is up, but no scouts have joined yet, so this round cannot be decided.';
-  return `Time is up: ${round.reveals} of ${plural(scouts, 'scout')} opened a report. The round ends when anyone calls settle.`;
+/** Seconds until the reports close (the result is due right after). */
+export function untilResult(now) {
+  if (!now || !now.ends) return now ? now.left : 0;
+  return Math.max(0, Math.ceil(now.ends[2] - now.elapsed));
 }
 
-function splitBar(round) {
-  const hen = big(round.hen_roosted);
-  const egg = big(round.egg_roosted);
-  const total = hen + egg;
-  if (total === 0n) {
-    return h('div', { class: 'split-wrap' },
-      h('div', { class: 'split split-empty', role: 'img', 'aria-label': 'Nothing roosted yet this round' },
-        h('span', null, 'Nobody has roosted yet this round')),
-      h('div', { class: 'split-legend' },
-        h('span', null, '🐔 0 HEN roosted'), h('span', null, '0 EGG roosted 🥚')));
-  }
-  const henPct = Number((hen * 1000n) / total) / 10;
-  const eggPct = Math.round((100 - henPct) * 10) / 10;
-  const bar = h('div', { class: 'split', role: 'img',
-    'aria-label': `Roosted this round: ${coins(hen)} HEN (${henPct}%) and ${coins(egg)} EGG (${eggPct}%)` });
-  const part = (side, pct) => {
-    const el = h('div', { class: `split-part split-${side}` }, pct >= 12 ? `${pct}%` : '');
-    el.style.flex = `${Math.max(pct, 1.5)} 1 0`;
-    return el;
-  };
-  if (hen > 0n) bar.append(part('hen', henPct));
-  if (egg > 0n) bar.append(part('egg', eggPct));
-  return h('div', { class: 'split-wrap' }, bar,
-    h('div', { class: 'split-legend' },
-      h('span', null, `🐔 ${coins(hen)} HEN roosted`), h('span', null, `${coins(egg)} EGG roosted 🥚`)));
-}
-
-function stepper(phase) {
-  const now = PHASES.indexOf(phase);
-  return h('ol', { class: 'steps', 'aria-label': 'Phases of a round' }, PHASES.map((name, i) =>
-    h('li', { class: i < now ? 'step done' : i === now ? 'step now' : 'step', 'aria-current': i === now ? 'step' : null },
-      h('span', { class: 'step-n' }, i < now ? '✓' : String(i + 1)), PHASE_NAME[name])));
-}
-
-/**
- * For a game with long phases (the daily game), when each phase ends on the viewer's clock.
- * Worked out from the round's opened_at on the chain and the phase lengths in get_config.
- */
-function schedule(state) {
+/** When each step of the open round happens, in ms on the viewer's clock (from opened_at and get_config). */
+export function timeline(state) {
   const { round, config, game } = state;
-  if (!config || config.roost_secs + config.commit_secs + config.reveal_secs < 3600) return null;
+  if (!round || !config) return null;
   const opened = Number(round.opened_at) / 1e6;
   const roostEnd = opened + config.roost_secs * 1000;
   const commitEnd = roostEnd + config.commit_secs * 1000;
   const revealEnd = commitEnd + config.reveal_secs * 1000;
-  const read = game.read_before_commit_end_secs ? commitEnd - game.read_before_commit_end_secs * 1000 : null;
-  return h('p', { class: 'round-times' },
-    h('span', null, `Roosting closes ${stamp(roostEnd)}`),
-    read ? h('span', null, `scouts read the shelves about ${stamp(read)}`) : null,
-    h('span', null, `reports open until ${stamp(revealEnd)}, then anyone can settle`),
-    h('span', { class: 'muted' }, '(your local time)'));
+  const readAt = game.read_before_commit_end_secs ? commitEnd - game.read_before_commit_end_secs * 1000 : null;
+  return { opened, roostEnd, commitEnd, revealEnd, readAt };
 }
 
-export function renderRound(state) {
-  const card = $('round-card');
+/** True while the scouts of a daily game are due to read the shelves (the end of the commit phase). */
+export const reading = (state, now) => now.phase === 'commit' && state.game.read_before_commit_end_secs > 0
+  && now.left <= state.game.read_before_commit_end_secs;
+
+const two = (n) => String(n).padStart(2, '0');
+
+/** "12:58" today, "tomorrow 05:30", or "Fri 13 Nov, 05:30". */
+export function at(ms) {
+  const d = new Date(ms);
+  const time = `${two(d.getHours())}:${two(d.getMinutes())}`;
+  const today = new Date();
+  if (d.toDateString() === today.toDateString()) return time;
+  const next = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+  if (d.toDateString() === next.toDateString()) return `tomorrow ${time}`;
+  return stamp(ms);
+}
+
+/** True when the replay has played every recorded day. */
+export function replayOver(state) {
   const { round, stats, game } = state;
+  if (!round || !game.replay || !game.dateList.length || !stats || stats.rounds_settled + 1 !== round.id) return false;
+  return openDay(round, stats) >= game.dateList.length;
+}
+
+/** A countdown that ticks every second. kind: 'phase' (the open phase) or 'result' (until the reports close). */
+export const tick = (kind, secs) => h('b', { class: 'countdown', 'data-until': kind, role: 'timer' }, mmss(secs));
+
+function phaseBits(state, now) {
+  const { round } = state;
+  if (now.phase === 'roost') return [h('span', { class: 'round-phase is-open' }, 'Bets open'), h('span', { class: 'count' }, 'close in ', tick('phase', now.left))];
+  if (now.phase === 'settle') {
+    return [h('span', { class: 'round-phase' }, round.scouts ? 'Time is up: result any moment' : 'Waiting for scouts to join')];
+  }
+  return [h('span', { class: 'round-phase' }, 'Bets closed'), h('span', { class: 'count' }, 'result in ', tick('result', untilResult(now)))];
+}
+
+export function renderRoundLine(state) {
+  const box = $('play-round');
+  const { round, game, stats } = state;
+  if (state.missing) {
+    onChange(box, ['missing'], () => put(box, h('span', { class: 'round-phase' }, 'This game has not started yet')));
+    return;
+  }
   if (!round) {
-    onChange(card, ['wait', state.error], () => put(card,
-      h('p', { class: 'card-label' }, "Today's progress"),
-      h('p', { class: 'loading' }, state.error ? 'The chain is not answering yet. Trying again.' : 'Reading the round from the chain…')));
+    onChange(box, ['wait', Boolean(state.error)], () => put(box, h('span', { class: 'round-phase muted' },
+      state.error ? 'The chain is not answering yet. Trying again.' : 'Reading the round from the chain…')));
     return;
   }
   const now = localClock(state);
-  // The score is read once per round. Use it for the day only when it belongs to this round.
-  const day = stats && stats.rounds_settled + 1 === round.id ? openDay(round, stats) : null;
-  const total = game.replay ? game.dateList.length : 0;
-  if (total && day !== null && day >= total) {
-    renderOver(state, card, total);
+  if (replayOver(state)) {
+    onChange(box, ['over', round.id], () => put(box, h('span', { class: 'round-pill' }, 'Replay'),
+      h('span', { class: 'round-phase' }, `All ${game.dateList.length} recorded days played`)));
     return;
   }
-  const sub = game.replay
-    ? dayText(game, day) || 'Replay of recorded shop prices'
-    : `Opened ${stamp(Number(round.opened_at) / 1e6)} (your local time)`;
-  onChange(card, [round.id, now.phase, round.hen_roosted, round.egg_roosted, round.commits, round.reveals, round.scouts, day,
-    reading(state, now), Boolean(state.config)], () => {
-    put(card,
-      h('div', { class: 'round-head' },
-        h('div', null,
-          h('p', { class: 'card-label' }, "Today's progress"),
-          h('p', { class: 'round-title' }, `Round ${round.id}`, game.replay ? chip('replay', 'Replay') : null),
-          h('p', { class: 'round-day' }, sub)),
-        h('div', { class: 'count' },
-          h('span', { class: 'count-label', id: 'count-label' }, COUNT_LABEL[now.phase]),
-          h('span', { class: 'count-num', id: 'count-num', role: 'timer' }, now.phase === 'settle' ? '0:00' : mmss(now.left)))),
-      stepper(now.phase),
-      h('p', { class: 'phase-line' }, phaseSentence(now.phase, round, state, now)),
-      schedule(state),
-      splitBar(round));
+  const day = game.replay && stats && stats.rounds_settled + 1 === round.id ? openDay(round, stats) : null;
+  onChange(box, [round.id, now.phase, round.commits, round.reveals, round.scouts, reading(state, now), Boolean(state.config), day], () => {
+    put(box, h('span', { class: 'round-pill' }, `Round ${round.id}`), phaseBits(state, now),
+      game.replay && day !== null ? h('span', { class: 'round-note' }, dayText(game, day)) : null);
   });
 }
 
-/** The replay has played every recorded day: its scouts stop and no round is decided any more. */
-function renderOver(state, card, total) {
+/** What happens while bets are closed, for the Play card: [headline, sentence], times on the viewer's clock. */
+export function closedWords(state, now) {
   const { round } = state;
-  const live = (state.games || []).find((g) => !g.replay);
-  onChange(card, ['over', round.id, total], () => put(card,
-    h('div', { class: 'round-head' },
-      h('div', null,
-        h('p', { class: 'card-label' }, "Today's progress"),
-        h('p', { class: 'round-title' }, 'The replay is over', chip('replay', 'Replay')),
-        h('p', { class: 'round-day' }, `All ${total} recorded days were played in ${round.id - 1} rounds.`)),
-      h('div', { class: 'count' },
-        h('span', { class: 'count-label' }, 'Recorded days played'),
-        h('span', { class: 'count-num' }, `${total}/${total}`))),
-    h('p', { class: 'phase-line' }, 'The scouts of the replay have stopped, so no more rounds will be decided. '
-      + 'Every result, every mint and every burn stays on the chain below.'),
-    live ? h('p', { class: 'phase-line' }, 'The game goes on with today\'s prices: ',
-      h('a', { href: `?game=${encodeURIComponent(live.id)}` }, live.label), '.') : null));
+  const t = timeline(state);
+  const result = t ? ` Result at ${at(t.revealEnd)}.` : '';
+  if (now.phase === 'commit' && state.game.read_before_commit_end_secs && !reading(state, now) && t) {
+    return ['Bets closed.', `The scouts read the shelves at ${at(t.readAt)}, result at ${at(t.revealEnd)}.`];
+  }
+  if (now.phase === 'commit') return ['Bets closed.', `The scouts are reading the shelves and sealing their reports: ${round.commits} of ${plural(round.scouts, 'scout')} sealed.${result}`];
+  if (now.phase === 'reveal') return ['Bets closed.', `The scouts are opening their sealed reports: ${round.reveals} of ${round.commits} open.${result}`];
+  if (!round.scouts) return ['Time is up.', 'No scouts have joined yet, so this round cannot be decided.'];
+  return ['Time is up.', 'The result lands as soon as someone settles the round; then the next round opens.'];
 }
 
-/** Called every second: moves the countdown without touching the chain. */
-export function tickRound(state) {
+let lastPhase = null;
+
+/** Called every second: moves every countdown without asking the chain; redraws when the phase changes. */
+export function tickRound(state, redraw) {
   if (!state.round) return;
   const now = localClock(state);
-  const num = $('count-num');
-  if (!num) return; // also when the replay is over: nothing counts down
-  const card = $('round-card');
-  if (card.dataset.phase !== now.phase) {
-    card.dataset.phase = now.phase;
-    renderRound(state); // the phase changed locally: redraw steps and sentence
-    return;
+  if (lastPhase !== now.phase) {
+    const first = lastPhase === null;
+    lastPhase = now.phase;
+    if (!first) { redraw(); return; }
   }
-  num.textContent = now.phase === 'settle' ? '0:00' : mmss(now.left);
-}
-
-function tile(label, main, sub) {
-  return h('div', { class: 'tile' }, h('p', { class: 'tile-label' }, label), h('div', { class: 'tile-main' }, main),
-    sub ? h('p', { class: 'tile-sub' }, sub) : null);
-}
-
-export function renderTiles(state) {
-  const box = $('tiles');
-  const view = state.stats;
-  if (!view) {
-    onChange(box, ['wait'], () => put(box, tile('Current streak', '…'), tile('All-time score', '…'), tile('Coins that exist', '…')));
-    return;
+  for (const el of document.querySelectorAll('.countdown')) {
+    el.textContent = mmss(el.dataset.until === 'result' ? untilResult(now) : now.left);
   }
-  const st = view.stats;
-  onChange(box, [st, view.hen_supply, view.egg_supply, view.rounds_settled], () => {
-    const side = st.streak_side && SIDE[st.streak_side];
-    const streak = side && st.streak > 0
-      ? tile('Current streak', h('span', { class: 'big' }, `${side.emoji} ${side.coin} ×${st.streak}`),
-        `${side.coin} came first ${plural(st.streak, 'round')} in a row. Best streak so far: ${st.best_streak}.`)
-      : tile('Current streak', h('span', { class: 'big muted' }, 'None yet'), 'The first win starts a streak. Ties and void rounds do not break it.');
-    const score = tile('All-time score',
-      h('div', { class: 'score' },
-        h('span', { class: 'score-item' }, h('b', null, String(st.hen_wins)), ' HEN wins'),
-        h('span', { class: 'score-item' }, h('b', null, String(st.egg_wins)), ' EGG wins'),
-        h('span', { class: 'score-item' }, h('b', null, String(st.ties)), st.ties === 1 ? ' tie' : ' ties')),
-      `${plural(view.rounds_settled, 'round')} settled so far, ${st.voids} of them void.`);
-    const supply = tile('Coins that exist',
-      h('div', { class: 'score' },
-        h('span', { class: 'score-item' }, h('b', null, coins(view.hen_supply, 0)), ' HEN'),
-        h('span', { class: 'score-item' }, h('b', null, coins(view.egg_supply, 0)), ' EGG')),
-      `Both coins started at zero. ${plural(st.players, 'account')} joined the coop, ${plural(st.starters_claimed, 'starter pack')} claimed.`);
-    put(box, streak, score, supply);
-  });
 }
