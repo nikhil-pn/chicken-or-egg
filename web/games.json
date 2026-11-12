@@ -1,0 +1,59 @@
+{
+  "default": "replay",
+  "games": [
+    {
+      "id": "replay",
+      "label": "Replay game",
+      "short": "Replay",
+      "hint": "fast, 100 s a round",
+      "replay": true,
+      "about": "107 real days of shop prices, played back one day every 100 seconds.",
+      "coop": "coop.replay.chickenoregg.testnet",
+      "hen": "hen.replay.chickenoregg.testnet",
+      "egg": "egg.replay.chickenoregg.testnet",
+      "dates": "data/replay-dates.json",
+      "price": {
+        "symbol": "₹",
+        "minor_per_major": 100,
+        "hen_unit": "kg",
+        "egg_unit": "dozen",
+        "place": "Kochi, India"
+      },
+      "players": [
+        "henmaxi.chickenoregg.testnet",
+        "eggmaxi.chickenoregg.testnet",
+        "trendchaser.chickenoregg.testnet",
+        "contrarian.chickenoregg.testnet",
+        "coinflip.chickenoregg.testnet",
+        "sharpbeak.chickenoregg.testnet"
+      ]
+    },
+    {
+      "id": "live",
+      "label": "Live: one round a day",
+      "short": "Live",
+      "hint": "one round a day",
+      "replay": false,
+      "about": "One round a day on today's shop prices. The scouts read the shop shelves once per round, about 45 minutes before the commit phase ends.",
+      "read_before_commit_end_secs": 2700,
+      "coop": "coop.chickenoregg.testnet",
+      "hen": "hen.chickenoregg.testnet",
+      "egg": "egg.chickenoregg.testnet",
+      "price": {
+        "symbol": "₹",
+        "minor_per_major": 100,
+        "hen_unit": "kg",
+        "egg_unit": "dozen",
+        "place": "Kochi, India"
+      },
+      "players": [
+        "henmaxi.chickenoregg.testnet",
+        "eggmaxi.chickenoregg.testnet",
+        "trendchaser.chickenoregg.testnet",
+        "contrarian.chickenoregg.testnet",
+        "coinflip.chickenoregg.testnet",
+        "sharpbeak.chickenoregg.testnet"
+      ]
+    }
+  ]
+}
