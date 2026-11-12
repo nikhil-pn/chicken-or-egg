@@ -9,6 +9,7 @@
 
 mod coin;
 mod math;
+mod players;
 mod round;
 mod scouts;
 mod settle;
