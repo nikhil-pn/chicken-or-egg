@@ -35,6 +35,17 @@ Daily aggregates only: `sim/data/source-index.json` (medians, product counts, da
 
 107 days are recorded, 27 Jul to 10 Nov 2026. Under the game's rules they give 46 days for the hen, 47 for the egg and 13 ties.
 
+## The live game
+
+The replay plays back recorded days. The live game (`coop.chickenoregg.testnet`, from 12 Nov 2026) plays one round per real day:
+
+- The scouts read the shelves once per round, 45 minutes before the commit phase ends. `swarm/shelf.mjs` does the reading; `swarm/live.mjs` turns it into the next link of the index.
+- The first reading sets the level: the median price of the products in stock. Every later reading moves the level by the geometric mean of the price changes of the products on both shelves, the same matched-basket rule as above, one reading instead of a daily median.
+- A side needs at least 5 products on both shelves, or the reading is not used and the scouts do not report. Too few reports make the round void.
+- Players pick a side in the 12-hour roost phase. The shelves are read about 11 hours after that phase closes.
+
+All seven scouts share one reading in this demo, so the live game tests the coop, not the scouts' honesty. Their scripted error models (noisy, lazy, liar) still run on top of it.
+
 ## What is old and what is new
 
 - **Old (before the hackathon):** the price tracker that reads the three apps, and its archive. It is not in this repository.
