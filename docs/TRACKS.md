@@ -10,6 +10,7 @@ The track asks for memecoins "where the meme does something: supply that reacts 
 - **What the meme does.** Every round, real shop prices of chicken and eggs settle the argument for that day. Whichever price rose more came first. The winning camp's roosted coins grow by 3% and the losing camp's shrink by 3%.
 - **Supply that reacts to the community.** How much is minted and burned depends on how many coins people put on each side. A crowd that guesses well grows the supply, a crowd that chases yesterday's winner shrinks it. `SIMULATION.md` shows this for six kinds of crowd.
 - **The ritual.** Pick a side before the scouts go shopping. The contract keeps each player's current and longest winning streak, and how many rounds in a row the same side has won.
+- **A daily ritual, live.** Besides the 107-day replay, a live coop plays one round per real day through judging: roost for 12 hours, then the scouts read the shelves and the day is settled. Judges can watch a round that nobody could know in advance.
 - **Rules instead of a team.** Both coins started at zero supply. There is no team allocation and no admin key, and the contract accounts have no access keys at all.
 - **No price chart.** The mechanic never reads the market price of either coin. It reads only what chicken and eggs cost in the shop.
 
