@@ -9,3 +9,4 @@ neardev/
 .DS_Store
 *.log
 .vercel/
+state/
