@@ -7,6 +7,7 @@
 //!
 //! There is no owner and no admin method. Every parameter is fixed in `new`.
 
+mod coin;
 mod math;
 mod round;
 mod scouts;
