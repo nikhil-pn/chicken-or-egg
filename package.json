@@ -1,0 +1,11 @@
+{
+  "name": "chicken-or-egg",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sim:data": "node sim/build-data.mjs",
+    "sim:supply": "node sim/run-supply.mjs",
+    "sim:swarm": "node sim/run-swarm.mjs",
+    "test": "node --test sim/test/*.test.mjs"
+  }
+}
