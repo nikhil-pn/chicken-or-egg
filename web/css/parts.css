@@ -1,17 +1,37 @@
-/* Parts used by every section: cards, chips, tables, empty states, buttons, the chart. */
+/* Parts used everywhere: stickers, sketch cards, chips, buttons, tables, empty states, the chart. */
 
-.card {
-  background: var(--card);
-  border: 2px solid var(--line);
-  border-radius: var(--radius);
-  box-shadow: 4px 4px 0 var(--shadow);
-  padding: 20px;
-  min-width: 0;
+/* Die-cut stickers: a white edge around the drawing, a soft shadow, a little tilt. */
+.stk { display: inline-block; flex: none; line-height: 0; transform: rotate(var(--tilt, 0deg)); transition: transform .3s var(--spring); }
+.stk svg {
+  display: block;
+  width: var(--size, 48px);
+  height: var(--size, 48px);
+  overflow: visible;
+  filter: drop-shadow(3px 0 0 #fff) drop-shadow(-3px 0 0 #fff) drop-shadow(0 3px 0 #fff) drop-shadow(0 -3px 0 #fff)
+    drop-shadow(0 5px 6px rgb(29 26 18 / 28%));
 }
-.card + .card { margin-top: 20px; }
-.card > h3 { margin: 8px 0 10px; }
+.stk-xs svg { --size: 20px; filter: drop-shadow(1.5px 0 0 #fff) drop-shadow(-1.5px 0 0 #fff) drop-shadow(0 1.5px 0 #fff) drop-shadow(0 -1.5px 0 #fff) drop-shadow(0 2px 2px rgb(29 26 18 / 25%)); }
+.stk-sm svg { --size: 30px; filter: drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff) drop-shadow(0 -2px 0 #fff) drop-shadow(0 3px 3px rgb(29 26 18 / 25%)); }
+.stk-md svg { --size: 48px; }
+.stk-lg svg { --size: 72px; }
+.stk-xl svg { --size: 96px; }
+@media (hover: hover) {
+  .stk-hover:hover { transform: rotate(0deg) scale(1.08); }
+}
 
-.card-label, .tile-label {
+/* Sketch cards: thick ink, uneven corners, offset shadow. */
+.card {
+  min-width: 0;
+  padding: 18px;
+  border: var(--line);
+  border-radius: var(--r-card);
+  background: var(--card);
+  box-shadow: var(--pop);
+}
+.card + .card { margin-top: 18px; }
+.card:nth-of-type(even) { border-radius: var(--r-card-2); }
+
+.label, .card-label, .tile-label {
   font-size: .72rem;
   font-weight: 700;
   letter-spacing: .08em;
@@ -25,8 +45,8 @@
   align-items: center;
   gap: 4px;
   padding: 1px 10px;
-  border: 1.5px solid transparent;
-  border-radius: 999px;
+  border: 2px solid transparent;
+  border-radius: var(--r-pill);
   font-family: var(--font-body);
   font-size: .78rem;
   font-weight: 700;
@@ -36,15 +56,67 @@
   text-transform: none;
   letter-spacing: 0;
 }
-.chip-hen { background: var(--hen); color: var(--on-brand); border-color: var(--line); }
-.chip-egg { background: var(--egg); color: var(--on-brand); border-color: var(--line); }
+.chip-hen { background: var(--hen); color: var(--ink); border-color: var(--ink); }
+.chip-egg { background: var(--egg); color: var(--ink); border-color: var(--ink); }
 .chip-tie, .chip-base, .chip-plain { background: var(--plain-bg); color: var(--ink-2); }
-.chip-void { background: transparent; color: var(--ink-2); border: 1.5px dashed var(--muted); }
+.chip-void { background: transparent; color: var(--ink-2); border: 2px dashed var(--muted); }
 .chip-good { background: var(--good-bg); color: var(--good-ink); }
 .chip-warn { background: var(--warn-bg); color: var(--warn-ink); }
 .chip-bad { background: var(--bad-bg); color: var(--bad-ink); }
-.chip-live { background: var(--good-ink); color: var(--card); text-transform: uppercase; letter-spacing: .08em; font-size: .68rem; }
-.chip-replay { background: var(--ink); color: var(--bg); text-transform: uppercase; letter-spacing: .08em; font-size: .68rem; }
+.chip-live { background: var(--good-ink); color: #fff; text-transform: uppercase; letter-spacing: .08em; font-size: .68rem; }
+.chip-replay { background: var(--ink); color: var(--paper); text-transform: uppercase; letter-spacing: .08em; font-size: .68rem; }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 8px 22px;
+  border: var(--line);
+  border-radius: var(--r-pill);
+  background: var(--card);
+  color: var(--ink);
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 1.05rem;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--pop-sm);
+  transition: transform .25s var(--spring), box-shadow .15s;
+  touch-action: manipulation;
+  user-select: none;
+}
+@media (hover: hover) {
+  .btn:hover:not(:disabled) { transform: translate(-1px, -2px) rotate(-1deg); box-shadow: 3px 5px 0 var(--ink); }
+}
+.btn:active:not(:disabled) { transform: translate(2px, 3px); box-shadow: none; transition-duration: .06s; }
+.btn:disabled { cursor: default; opacity: .6; box-shadow: none; }
+.btn-hen { background: var(--hen); }
+.btn-egg { background: var(--egg); }
+.btn-ink { background: var(--ink); color: #fff; }
+.more { display: block; margin: 16px auto 0; min-height: 40px; font-size: .95rem; background: var(--hen); }
+
+/* "See more": a details box that expands. */
+.see-more { margin-top: 22px; }
+.see-more > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border: 2px dashed var(--ink);
+  border-radius: var(--r-pill);
+  background: var(--card);
+  font-family: var(--font-head);
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+}
+.see-more > summary::-webkit-details-marker { display: none; }
+.see-more > summary::after { content: '+'; font-size: 1.2rem; line-height: 1; transition: transform .3s var(--spring); }
+.see-more[open] > summary::after { transform: rotate(45deg); }
+.see-more[open] > summary { margin-bottom: 16px; }
 
 /* Tables live in their own sideways scroll box. A soft edge shows where there is more to scroll to. */
 .scroll {
@@ -64,7 +136,7 @@
 }
 table { width: 100%; border-collapse: collapse; font-size: .88rem; font-variant-numeric: tabular-nums; }
 th, td { padding: 9px 12px; text-align: left; white-space: nowrap; vertical-align: top; }
-th { font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--line); vertical-align: bottom; }
+th { font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); border-bottom: 2.5px solid var(--ink); vertical-align: bottom; }
 td { border-bottom: 1px solid var(--hair); }
 tbody tr:last-child td { border-bottom: 0; }
 .num { text-align: right; }
@@ -81,28 +153,10 @@ code { font-family: var(--font-mono); font-size: .84em; padding: 1px 5px; border
 .fine { margin-top: 12px; font-size: .8rem; color: var(--muted); max-width: 84ch; }
 
 /* Nothing to show yet, or still reading. */
-.empty { padding: 28px 16px; border: 2px dashed var(--hair); border-radius: 14px; text-align: center; }
-.empty-emoji { display: block; font-size: 2.2rem; line-height: 1.2; }
+.empty { display: grid; justify-items: center; gap: 4px; padding: 24px 16px; border: 2px dashed var(--hair); border-radius: var(--r-card-2); text-align: center; }
 .empty-title { margin-top: 6px; font-family: var(--font-head); font-weight: 600; font-size: 1.15rem; }
-.empty-text { margin: 4px auto 0; max-width: 52ch; font-size: .92rem; color: var(--ink-2); }
+.empty-text { max-width: 52ch; font-size: .92rem; color: var(--ink-2); }
 .loading { padding: 6px 0; color: var(--muted); }
-
-.more {
-  display: block;
-  margin: 16px auto 0;
-  padding: 8px 20px;
-  border: 2px solid var(--line);
-  border-radius: 999px;
-  background: var(--hen);
-  color: var(--on-brand);
-  font-family: var(--font-head);
-  font-size: .95rem;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 3px 3px 0 var(--shadow);
-}
-.more:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--shadow); }
-.more:active { transform: translate(3px, 3px); box-shadow: none; }
 
 /* Line chart: thin lines, quiet grid, text in ink colours, one axis. */
 .chart { margin-top: 14px; min-width: 0; }
@@ -124,10 +178,10 @@ code { font-family: var(--font-mono); font-size: .84em; padding: 1px 5px; border
   position: absolute;
   z-index: 2;
   padding: 8px 10px;
-  border: 1.5px solid var(--line);
+  border: 2px solid var(--ink);
   border-radius: 10px;
   background: var(--card);
-  box-shadow: 3px 3px 0 var(--shadow);
+  box-shadow: var(--pop-sm);
   font-size: .82rem;
   white-space: nowrap;
   pointer-events: none;
@@ -140,7 +194,7 @@ code { font-family: var(--font-mono); font-size: .84em; padding: 1px 5px; border
 .twin-scroll { max-height: 300px; margin-top: 8px; overflow: auto; border: 1px solid var(--hair); }
 
 @media (max-width: 520px) {
-  .card { padding: 16px; }
+  .card { padding: 14px; }
   th, td { padding: 8px 10px; }
 }
 
