@@ -23,6 +23,8 @@ export async function loadGame() {
   return {
     game,
     games: registry.games,
+    defaultId: registry.default,
+    mock: params.has('mock'),
     unknown: wanted && wanted !== game.id ? wanted : null,
     fixture: params.get('fixture'),
   };
