@@ -161,6 +161,17 @@ node scripts/audit.mjs deploy/replay.json --replay
 
 Everything here was written during the hackathon. The one thing that existed before is our own price tracker and its archive of shop prices. It is not in this repository; only the daily aggregates made from it are. See [`docs/INDEX.md`](docs/INDEX.md).
 
+## Team
+
+Two people.
+
+| Who | Does what | Where |
+|---|---|---|
+| Nikhil | The game, the contracts, the scouts and the page. Submits the project. | GitHub [nikhil-pn](https://github.com/nikhil-pn) |
+| Hina | The demo film: script check and voiceover. | GitHub [Hina-Hanan](https://github.com/Hina-Hanan), X [@iam_hinaaaa](https://x.com/iam_hinaaaa) |
+
+An AI coding agent wrote most of the code under our direction. [`AI_USAGE.md`](AI_USAGE.md) says who did what.
+
 ## Licence
 
 MIT. See `LICENSE`.
