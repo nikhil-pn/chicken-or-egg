@@ -15,8 +15,32 @@ const SIDES = [
   { side: 'egg', watch: /egg/, unit: (p) => p.pricePerUnit }, // rupees per egg
 ];
 
+/** The raw listings kept per side, for the scouts that pick their own products. */
+const RAW_CAP = 80;
+
 const has = (name, word) => name.includes(word.toLowerCase());
 const pause = (ms) => new Promise((done) => setTimeout(done, ms));
+
+/** One listing as the AI scout sees it: what the shop says, before any filter. */
+const listing = (key, p) => ({
+  key, name: p.name, price: p.price, weightInGms: p.weightInGms ?? null, unitCount: p.unitCount ?? null,
+  pricePerKg: p.pricePerKg ?? null, pricePerUnit: p.pricePerUnit ?? null,
+});
+
+/** At most `n` listings, taken from each app in turn, so one app cannot crowd out the others. */
+function capFair(list, n) {
+  const byApp = new Map();
+  for (const item of list) {
+    const app = item.key.split(':')[0];
+    byApp.set(app, [...(byApp.get(app) ?? []), item]);
+  }
+  const queues = [...byApp.values()];
+  const out = [];
+  for (let i = 0; out.length < n && queues.some((q) => i < q.length); i += 1) {
+    for (const q of queues) if (i < q.length && out.length < n) out.push(q[i]);
+  }
+  return out;
+}
 
 /** The apps sometimes answer a search with no products at all, so an empty answer is asked again. */
 async function searchOnce(search, query, tries = 3) {
@@ -51,7 +75,10 @@ function topBrands(products, n) {
   return products.filter((p) => keep.has(brand(p)));
 }
 
-/** One reading: { hen: { "<app>:<product>": rupees per kg }, egg: { ...: rupees per egg } }. In-stock products only. */
+/**
+ * One reading: { hen: { "<app>:<product>": rupees per kg }, egg: { ...: rupees per egg }, raw }. In-stock products only.
+ * `raw` is { hen: [listing], egg: [listing] }: everything the searches for that side returned, before the filters.
+ */
 export async function readShelf(dir = process.env.TRACKER_DIR, log = () => {}) {
   if (!dir) throw new Error('TRACKER_DIR is not set. The shop reader is not part of this repository.');
   const load = (file) => import(pathToFileURL(join(dir, file)).href);
@@ -60,6 +87,7 @@ export async function readShelf(dir = process.env.TRACKER_DIR, log = () => {}) {
   const watches = JSON.parse(readFileSync(join(dir, 'watchlist.json'), 'utf8'))
     .filter((w) => w.enabled !== false && w.type !== 'link' && w.match);
   const shelf = { hen: {}, egg: {} };
+  const raw = { hen: new Map(), egg: new Map() };
 
   // One app at a time, so only one browser is open.
   for (const platform of PLATFORMS) {
@@ -75,6 +103,10 @@ export async function readShelf(dir = process.env.TRACKER_DIR, log = () => {}) {
         if (!searches.has(w.query)) {
           searches.set(w.query, await searchOnce(search, w.query));
         }
+        for (const p of searches.get(w.query).products ?? []) {
+          const key = `${platform}:${p.variantId}`;
+          if (!p.outOfStock && p.variantId && p.price > 0) raw[feeds.side].set(key, listing(key, p));
+        }
         const hits = topBrands(searches.get(w.query).products.filter((p) => fits(p, w.match)), w.match.topBrands);
         for (const p of hits) {
           if (p.outOfStock || !(feeds.unit(p) > 0)) continue;
@@ -89,11 +121,12 @@ export async function readShelf(dir = process.env.TRACKER_DIR, log = () => {}) {
       await session?.close().catch(() => {});
     }
   }
-  return shelf;
+  return { ...shelf, raw: { hen: capFair([...raw.hen.values()], RAW_CAP), egg: capFair([...raw.egg.values()], RAW_CAP) } };
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const shelf = await readShelf(undefined, console.error);
   console.error(`${Object.keys(shelf.hen).length} chicken packs, ${Object.keys(shelf.egg).length} egg packs in stock`);
+  console.error(`raw listings: ${shelf.raw.hen.length} for chicken, ${shelf.raw.egg.length} for eggs`);
   console.log(JSON.stringify(shelf));
 }
