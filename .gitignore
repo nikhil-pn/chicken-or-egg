@@ -1,0 +1,11 @@
+target/
+node_modules/
+.env
+.env.*
+!.env.example
+*.wasm
+.near-credentials/
+neardev/
+.DS_Store
+*.log
+.vercel/
