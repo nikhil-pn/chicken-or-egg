@@ -4,6 +4,7 @@ import { h } from './dom.js';
 export const COIN = 18; // decimals of $HEN and $EGG
 export const NEAR = 24; // decimals of NEAR
 export const EXPLORER = 'https://testnet.nearblocks.io/address/';
+export const TX = 'https://testnet.nearblocks.io/txns/';
 
 export function big(value) {
   try { return BigInt(value ?? 0); } catch { return 0n; }
@@ -147,5 +148,5 @@ export const acct = (account, label) =>
   h('a', { class: 'acct', href: EXPLORER + encodeURIComponent(account), target: '_blank', rel: 'noopener', title: account },
     label || shortName(account));
 
-export const SIDE = { hen: { coin: 'HEN', food: 'chicken', emoji: '🐔' }, egg: { coin: 'EGG', food: 'eggs', emoji: '🥚' } };
+export const SIDE = { hen: { coin: 'HEN', food: 'chicken', Food: 'Chicken' }, egg: { coin: 'EGG', food: 'eggs', Food: 'Eggs' } };
 export const other = (side) => (side === 'hen' ? 'egg' : 'hen');
