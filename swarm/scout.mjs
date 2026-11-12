@@ -107,6 +107,7 @@ export class Scout {
     const result = await call(this.account, this.coop, 'settle', {}, { gas: 60n * TGAS });
     const value = JSON.parse(Buffer.from(result.status.SuccessValue, 'base64').toString());
     this.log(`${this.name} settled round ${value.id}: ${value.outcome.toUpperCase()}`
-      + ` (${value.reveals} reports, ${value.honest} honest, ${value.slashed.length} slashed)`);
+      + ` (${value.reveals} reports, ${value.honest} honest, ${value.slashed.length} slashed)`
+      + ` tx ${result.transaction.hash}`);
   }
 }
