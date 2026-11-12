@@ -23,6 +23,25 @@ pays the scouts that were close to it, and takes bond from the ones that were no
 
 The full rules, with the exact arithmetic, are in [`RULES.md`](RULES.md). They were written before the contracts.
 
+## The two coins
+
+`$HEN` and `$EGG` are ordinary NEP-141 coins with 18 decimals. Only the coop contract can mint or burn them, and it does so only for the reasons in this table. Both coins started at a supply of zero. There is no team allocation and no presale.
+
+| What happens | What it does to the supply | Parameter (value in the replay) |
+|---|---|---|
+| A new player claims a starter pack, once per account | mints 1,000 HEN and 1,000 EGG | `starter_fee` 0.1 NEAR, `starter_cap` 100 packs |
+| Your side wins the round | your roosted coins come back with 3% more, newly minted | `hatch_bps` 300 |
+| Your side loses the round | 3% of your roosted coins are burned | `fry_bps` 300 |
+| The two price moves are closer than 0.1 percentage points | tie: nothing is minted or burned | `tie_bps` 10 |
+| Scouts reported honestly in a round with a winner | mints 100 of the winning coin, shared by the honest scouts | `scout_pay` 100 |
+| Fewer than 3 scouts reported | void round: nothing is minted or burned | `min_reveals` 3 |
+
+All parameters were set once, when the contract was created. Anyone can read them with `get_config`. The contract has no method that changes them, and the three contract accounts have no access keys, so nobody can replace the code.
+
+The coop writes every mint and burn to a log that anyone can read with `get_ledger`: the round, the reason, the coin and the amount.
+
+The values were chosen from a simulation of 200 scripted players on the real price series. It shows the supply of both coins over 60 days for six kinds of crowd: [`docs/SIMULATION.md`](docs/SIMULATION.md).
+
 ## Proof on NEAR testnet
 
 Everything below is on chain and can be checked without trusting this page.
