@@ -1,0 +1,14 @@
+{
+  "about": "The scout swarm. Every scout is its own account under one parent and posts its own bond.",
+  "parent": "chickenoregg.testnet",
+  "fund": "1 NEAR",
+  "scouts": [
+    { "name": "scout-1", "kind": "honest" },
+    { "name": "scout-2", "kind": "honest" },
+    { "name": "scout-3", "kind": "honest" },
+    { "name": "scout-4", "kind": "honest" },
+    { "name": "scout-5", "kind": "noisy" },
+    { "name": "scout-6", "kind": "lazy" },
+    { "name": "scout-7", "kind": "liar" }
+  ]
+}
