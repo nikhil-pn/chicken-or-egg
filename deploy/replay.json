@@ -1,0 +1,24 @@
+{
+  "about": "The replay coop: 107 real days of shop prices, one day every 100 seconds.",
+  "home": "replay.chickenoregg.testnet",
+  "fund": { "home": "9 NEAR", "hen": "2 NEAR", "egg": "2 NEAR", "coop": "3.5 NEAR" },
+  "config": {
+    "roost_secs": 40,
+    "commit_secs": 30,
+    "reveal_secs": 30,
+    "hatch_bps": 300,
+    "fry_bps": 300,
+    "tie_bps": 10,
+    "scout_pay": "100 COIN",
+    "scout_bond": "0.3 NEAR",
+    "min_bond": "0.15 NEAR",
+    "slash_bps": 1000,
+    "tolerance_bps": 100,
+    "min_reveals": 3,
+    "max_scouts": 32,
+    "starter_hen": "1000 COIN",
+    "starter_egg": "1000 COIN",
+    "starter_fee": "0.1 NEAR",
+    "starter_cap": 100
+  }
+}
