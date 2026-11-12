@@ -1,0 +1,14 @@
+{
+  "about": "Bot players. Each is its own account with one scripted style, and starts from the same starter pack anyone can claim.",
+  "parent": "chickenoregg.testnet",
+  "fund": "0.6 NEAR",
+  "share_bps": 5000,
+  "players": [
+    { "name": "henmaxi", "kind": "always_hen" },
+    { "name": "eggmaxi", "kind": "always_egg" },
+    { "name": "trendchaser", "kind": "momentum" },
+    { "name": "contrarian", "kind": "contrarian" },
+    { "name": "coinflip", "kind": "random" },
+    { "name": "sharpbeak", "kind": "sharp" }
+  ]
+}
