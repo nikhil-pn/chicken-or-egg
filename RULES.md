@@ -110,6 +110,23 @@ Coins leave only by being **fried**.
 
 All scouts compute the **same published index** from the same public shop shelves (see `docs/INDEX.md`), so honest scouts land close together. A scout far from the middle is wrong or lying.
 
+## Exact arithmetic
+
+The contract and the simulation in `sim/` follow the same whole-number rules, so they give identical results.
+
+- Prices are whole numbers. Coin amounts and NEAR amounts are whole numbers of their smallest unit.
+- **Middle value**: sort the revealed prices; odd count takes the middle one; even count takes `(a + b) / 2` of the two middle ones, rounded down.
+- **Honest**: `|price - middle| * 10000 <= tolerance_bps * middle`, for the hen price and for the egg price.
+- **Move**: `(now - last) * 1000000 / last`, in parts per million, rounded toward zero. A tie is `|hen_move - egg_move| < tie_bps * 100`.
+- **Hatch**: a winning roost `a` becomes `a * (10000 + hatch_bps) / 10000`, rounded down. The coop mints `side_total * hatch_bps / 10000`, rounded down.
+- **Fry**: a losing roost `a` becomes `a * (10000 - fry_bps) / 10000`, rounded down. The coop burns `side_total * fry_bps / 10000`, rounded down.
+- **Scout pay**: each honest scout gets `scout_pay / honest_count`, rounded down. The coop mints exactly that times `honest_count`.
+- **Slash**: `bond * slash_bps / 10000`, rounded down, moved from the bond to the pot.
+- **Pot**: each honest scout gets `pot / honest_count`, rounded down. The remainder stays in the pot.
+- Rounding always favours the coop, so it can never owe more coins than it holds. The leftover dust stays in the coop for good.
+
+Order inside `settle`: count reveals, find the middle values, mark honest scouts, slash, pay the pot, decide the result, mint and burn, open the next round.
+
 ## Parameters
 
 Every number below is fixed when the coop is created and can be read with `get_config()`. There is no method that changes them, and the contract accounts keep no access keys after launch.
