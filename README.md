@@ -155,6 +155,12 @@ npm run sim:supply     # 60 days of supply for six kinds of crowd
 npm run sim:swarm      # the scout swarm with scripted strategies, no LLM calls
 ```
 
+The page is plain static files that read the chain from the browser. Serve the folder and open it:
+
+```
+python3 -m http.server 8000 -d web    # then open http://localhost:8000 (add ?game=live for the live game)
+```
+
 To check the game on testnet you need no key and no account. This reads the chain and compares every settled round with `RULES.md` and with the recorded days:
 
 ```
