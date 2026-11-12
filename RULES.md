@@ -159,5 +159,5 @@ The values are chosen from the supply simulation in `sim/` and recorded in the R
 - **We run the first scouts.** At launch they run on our machine. Registration is open, but until others join the result rests on us reading the shelves honestly.
 - **Sybil accounts.** Hatches and fries are proportional to the coins roosted, so splitting coins across many accounts gains nothing. The starter pack is per account: one person with many accounts can take many packs, limited only by the fee and the cap.
 - **Shop prices are sticky.** Someone who watches the shelves closely will guess better than a coin flip. That is the game.
-- **Storage is paid by the coop.** Every round adds one result and a few log lines to the contract, about 1 NEAR per 100 kB. The coop pays this from its own balance, which is funded at launch. Anyone can send it more NEAR; nobody can take NEAR out except scouts collecting what they won.
+- **Storage is paid by the coop.** Every round adds one result and a few log lines to the contract, about 1 NEAR per 100 kB. The coop pays this from its own balance, which is funded at launch. Anyone can send it more NEAR; the only NEAR that leaves is what scouts won and the bonds their funders take back.
 - **No timer on NEAR.** A round moves on only when somebody calls `settle`. Scouts are allowed to, and so is anyone else.
