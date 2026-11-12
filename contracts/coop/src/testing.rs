@@ -70,6 +70,22 @@ pub fn add_scout(coop: &mut Coop, name: &str) {
     coop.register_scout(acc(name));
 }
 
+/// The three honest scouts most tests use.
+pub const S: [&str; 3] = ["scout-1.test", "scout-2.test", "scout-3.test"];
+
+pub fn coop_with_scouts() -> Coop {
+    let mut coop = new_coop();
+    for scout in S {
+        add_scout(&mut coop, scout);
+    }
+    coop
+}
+
+/// The same prices from the three honest scouts.
+pub fn all(hen: u128, egg: u128) -> Vec<(&'static str, u128, u128)> {
+    S.iter().map(|scout| (*scout, hen, egg)).collect()
+}
+
 /// Plays the scouts' part of a round that opened `start` seconds after `T0`:
 /// every scout in `reports` seals and opens its prices, then `settler.test` settles.
 pub fn play_round(coop: &mut Coop, start: u64, reports: &[(&str, u128, u128)]) -> RoundResult {

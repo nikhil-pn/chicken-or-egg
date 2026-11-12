@@ -215,21 +215,7 @@ mod tests {
     use super::*;
     use crate::testing::*;
 
-    const S: [&str; 3] = ["scout-1.test", "scout-2.test", "scout-3.test"];
     const LIAR: &str = "liar.test";
-
-    fn coop_with_scouts() -> Coop {
-        let mut coop = new_coop();
-        for scout in S {
-            add_scout(&mut coop, scout);
-        }
-        coop
-    }
-
-    /// The same prices from the three honest scouts.
-    fn all(hen: u128, egg: u128) -> Vec<(&'static str, u128, u128)> {
-        S.iter().map(|scout| (*scout, hen, egg)).collect()
-    }
 
     #[test]
     fn the_first_round_is_a_baseline() {
