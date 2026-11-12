@@ -3,13 +3,15 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { TGAS, call, view } from '../lib/near.mjs';
+import { TGAS, call, near, view } from '../lib/near.mjs';
 
 /** The seal the coop checks: sha256 of "<hen>:<egg>:<salt>:<scout account>", in hex. */
 export const sealOf = (hen, egg, salt, id) =>
   createHash('sha256').update(`${hen}:${egg}:${salt}:${id}`).digest('hex');
 
 const TRIES = 4;
+/** A scout takes its earnings home once in this many rounds. */
+const COLLECT_EVERY = 10;
 /** Scouts take turns at settling, this far apart. */
 const TURN_MS = 6000;
 
@@ -33,7 +35,8 @@ export class Scout {
     this.busy = true;
     try {
       if (this.state.round !== round.id) this.state = { round: round.id };
-      if (round.phase === 'commit') await this.commit(ctx);
+      if (round.phase === 'roost') await this.collect(round);
+      else if (round.phase === 'commit') await this.commit(ctx);
       else if (round.phase === 'reveal') await this.reveal();
       else if (round.phase === 'settle') await this.settle(round);
     } catch (error) {
@@ -41,6 +44,17 @@ export class Scout {
     } finally {
       this.busy = false;
     }
+  }
+
+  /** Pays what the scout earned to its funder. The working key may do this and nothing more with money. */
+  async collect(round) {
+    const s = this.state;
+    if (s.collected || round.id % COLLECT_EVERY !== this.turn) return;
+    s.collected = true;
+    const me = await view(this.coop, 'get_scout', { scout_id: this.id });
+    if (!me || (me.earned_near === '0' && me.earned_hen === '0' && me.earned_egg === '0')) return;
+    await call(this.account, this.coop, 'collect_scout', { scout_id: this.id }, { gas: 20n * TGAS });
+    this.log(`${this.name} collected ${near(me.earned_near)} NEAR and its coins`);
   }
 
   async commit(ctx) {
