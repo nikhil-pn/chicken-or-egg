@@ -9,7 +9,7 @@ Chicken or Egg is a daily memecoin duel on NEAR **testnet**. Two NEP-141 coins, 
 | Live, one round a day | `coop.chickenoregg.testnet` | `hen.` / `egg.chickenoregg.testnet` | running through judging |
 | Replay of 107 recorded days | `coop.replay.chickenoregg.testnet` | `hen.replay.` / `egg.replay.chickenoregg.testnet` | finished 12 Nov 2026 |
 
-Scouts: `scout-1` to `scout-7.chickenoregg.testnet`. Bot players: `henmaxi`, `eggmaxi`, `trendchaser`, `contrarian`, `coinflip`, `sharpbeak` `.chickenoregg.testnet`. All six contract accounts have no access keys.
+Scouts: `scout-1` to `scout-7.chickenoregg.testnet` in both games. The live game also has `scout-8`, an AI scout (`swarm/ai.mjs`): it picks the products itself with an open model on NEAR AI Cloud and computes its own index. It skips any round in which the model cannot be reached, so a skipped round is not a fault. Bot players: `henmaxi`, `eggmaxi`, `trendchaser`, `contrarian`, `coinflip`, `sharpbeak` `.chickenoregg.testnet`. All six contract accounts have no access keys.
 
 ## Check it, in this order
 
