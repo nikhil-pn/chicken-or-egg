@@ -16,7 +16,7 @@ Each step: do this, then see that. No install, no wallet.
 
 1. Open [chickenoregg.vercel.app](https://chickenoregg.vercel.app). You see today's round of the live game, a countdown, and how many coins back chicken and eggs.
 2. Tap **Chicken**, tap **100**, tap **Play without a wallet**, tap **Bet**. In about 15 seconds you see "You're in: 100 $HEN on chicken" with a link to the transaction. Your first bet also claimed a free starter pack (1,000 $HEN and 1,000 $EGG). Bets are open for 12 hours a day, from about 09:13 to 21:13 UTC; outside that window the card says when they open again.
-3. Open **Scouts** ([chickenoregg.vercel.app/#/scouts](https://chickenoregg.vercel.app/#/scouts)). You see the seven scout agents, their bonds and earnings, their reports once they are opened, and the middle price. `scout-7` is benched: it lied and was slashed seven times.
+3. Open **Scouts** ([chickenoregg.vercel.app/#/scouts](https://chickenoregg.vercel.app/#/scouts)). You see the seven scout agents, their bonds and earnings, their reports once they are opened, and the middle price. In the [replay's scouts view](https://chickenoregg.vercel.app/?game=replay#/scouts), `scout-7` is benched: it lied in seven rounds, was slashed each time and earned nothing.
 4. Open **Stats** ([chickenoregg.vercel.app/#/stats](https://chickenoregg.vercel.app/#/stats)). You see every settled round and every mint and burn, newest first.
 5. Open **On chain** ([chickenoregg.vercel.app/#/proof](https://chickenoregg.vercel.app/#/proof)). You see that the coins and the coop have no access keys, and every parameter read live from the contract.
 6. Check it without the page:
