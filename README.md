@@ -89,7 +89,7 @@ Everything below is on chain and can be checked without trusting this page.
 | A round goes to the egg | round 18, [settle](https://testnet.nearblocks.io/txns/3zyfMYBb2rsFTF4mMJpMReBjfpeQNiuVGYZE9L24uaz9) |
 | A tie: the two moves were closer than 0.1 percentage points, nothing minted or burned | round 6, [settle](https://testnet.nearblocks.io/txns/8bSZubdzPrRLMVP9H5v9qaKqReVcbJpUWfrTtHB3XchU) |
 | Scouts that seal a report and never open it lose bond | round 11, [settle](https://testnet.nearblocks.io/txns/89naNGSBKCoC5wRJ7iaB59nGQ8rBTXReHRbLj6hfqjUr): six scouts slashed, round void |
-| A scout that lies is slashed until it is benched | `scout-7` reported false prices in seven rounds (3, and 5 to 10). It was slashed 7 times, its bond fell from 0.3 to 0.143 NEAR, below the floor of 0.15, and the coop stopped taking its reports. |
+| A scout that lies is slashed until it is benched | `scout-7` reported false prices in seven rounds (3, and 5 to 10). It was slashed 7 times, its bond fell from 0.3 to 0.143 NEAR, below the floor of 0.15, and the coop stopped taking its reports. One of the seven: [round 6 settle](https://testnet.nearblocks.io/txns/8bSZubdzPrRLMVP9H5v9qaKqReVcbJpUWfrTtHB3XchU). |
 
 Check any of it yourself with the NEAR CLI:
 
@@ -103,6 +103,27 @@ near contract call-function as-read-only coop.replay.chickenoregg.testnet get_sc
 ```
 
 Every transaction of the launch is listed in [`deploy/replay.lock.json`](deploy/replay.lock.json).
+
+## Limits, stated plainly
+
+- **A majority of scouts can lie together.** The middle value is safe only while fewer than half of the reporting scouts collude. Anyone can join as a scout for one bond, so an attack costs about (N/2 + 1) bonds. With real money the bond must be far larger than what one round can move.
+- **We run the first scouts.** All seven run on our machine. Registration is open to anyone, but until others join, the result rests on us.
+- **Many accounts.** Hatches and fries are in proportion to the coins roosted, so splitting coins over many accounts gains nothing. The starter pack is per account. One person with many accounts can take many packs; only the fee (0.1 NEAR) and the cap (100 packs) limit that.
+- **Shop prices move slowly.** Someone who watches the shelves closely will guess better than a coin flip. That is the game.
+- **One city, three shops.** The prices are real shelf prices from grocery delivery apps in Kochi, India. This is a real series, not a national statistic. The contract compares each price only with its own value in the last round, so the currency and the units drop out. See [`docs/INDEX.md`](docs/INDEX.md).
+- **The testnet game is a replay.** It plays 107 recorded days, one day about every 100 seconds, so anyone can check each round against `sim/data/daily-index.json`. The scouts read the recorded series, not the shops.
+- **The coop pays for its own storage.** Each round adds about 450 bytes to the contract (measured over rounds 11 to 20), which locks about 0.0045 NEAR. The coop pays this from its own balance. Anyone can send it more NEAR.
+- **NEAR has no timer.** A round moves on only when someone calls `settle()`. The scouts take turns, and anyone else may call it too.
+- **Testnet only.** Nothing is deployed on mainnet and the coins have no value.
+
+## What went wrong during the replay
+
+The mistakes are on chain and we left them there. Six of the first 20 rounds are void:
+
+- **Rounds 1, 2 and 4** passed while we were starting and restarting the scout program. No scout reported.
+- **Rounds 11, 12 and 15.** The free public RPC node we used stopped answering for a minute or two at a time. In round 11 six scouts had sealed their reports and could not open them in time. The contract did what the rules say: it slashed all six and made the round void ([transaction](https://testnet.nearblocks.io/txns/89naNGSBKCoC5wRJ7iaB59nGQ8rBTXReHRbLj6hfqjUr)). Rounds 12 and 15 got fewer than three reports and are void too.
+
+A void round mints and burns nothing and keeps the last good prices. The scouts report the missed day again in the next round, so no recorded day is skipped. After round 12 the scouts got a second RPC node, and after round 15 a limit of 20 seconds per request (`lib/near.mjs`).
 
 ## Licence
 
