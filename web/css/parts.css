@@ -1,0 +1,163 @@
+/* Parts used by every section: cards, chips, tables, empty states, buttons, the chart. */
+
+.card {
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 4px 4px 0 var(--shadow);
+  padding: 20px;
+  min-width: 0;
+}
+.card + .card { margin-top: 20px; }
+.card > h3 { margin: 8px 0 10px; }
+
+.card-label, .tile-label {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Chips: small labels. Never colour alone, always a word too. */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 1px 10px;
+  border: 1.5px solid transparent;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: .78rem;
+  font-weight: 700;
+  line-height: 1.5;
+  white-space: nowrap;
+  vertical-align: middle;
+  text-transform: none;
+  letter-spacing: 0;
+}
+.chip-hen { background: var(--hen); color: var(--on-brand); border-color: var(--line); }
+.chip-egg { background: var(--egg); color: var(--on-brand); border-color: var(--line); }
+.chip-tie, .chip-base, .chip-plain { background: var(--plain-bg); color: var(--ink-2); }
+.chip-void { background: transparent; color: var(--ink-2); border: 1.5px dashed var(--muted); }
+.chip-good { background: var(--good-bg); color: var(--good-ink); }
+.chip-warn { background: var(--warn-bg); color: var(--warn-ink); }
+.chip-bad { background: var(--bad-bg); color: var(--bad-ink); }
+.chip-live { background: var(--good-ink); color: var(--card); text-transform: uppercase; letter-spacing: .08em; font-size: .68rem; }
+.chip-replay { background: var(--ink); color: var(--bg); text-transform: uppercase; letter-spacing: .08em; font-size: .68rem; }
+
+/* Tables live in their own sideways scroll box. A soft edge shows where there is more to scroll to. */
+.scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+  border-radius: 10px;
+  background-image:
+    linear-gradient(to right, var(--card) 40%, transparent),
+    linear-gradient(to left, var(--card) 40%, transparent),
+    linear-gradient(to right, var(--edge), transparent),
+    linear-gradient(to left, var(--edge), transparent);
+  background-position: left center, right center, left center, right center;
+  background-repeat: no-repeat;
+  background-size: 48px 100%, 48px 100%, 18px 100%, 18px 100%;
+  background-attachment: local, local, scroll, scroll;
+}
+table { width: 100%; border-collapse: collapse; font-size: .88rem; font-variant-numeric: tabular-nums; }
+th, td { padding: 9px 12px; text-align: left; white-space: nowrap; vertical-align: top; }
+th { font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--line); vertical-align: bottom; }
+td { border-bottom: 1px solid var(--hair); }
+tbody tr:last-child td { border-bottom: 0; }
+.num { text-align: right; }
+.row-void td, .row-off td { color: var(--muted); }
+.row-hen td:first-child { box-shadow: inset 4px 0 0 var(--hen); }
+.row-egg td:first-child { box-shadow: inset 4px 0 0 var(--egg); }
+.amount { font-weight: 600; }
+.amount.plus { color: var(--good-ink); }
+.amount.minus { color: var(--bad-ink); }
+.acct { font-family: var(--font-mono); font-size: .92em; }
+code { font-family: var(--font-mono); font-size: .84em; padding: 1px 5px; border-radius: 5px; background: var(--plain-bg); color: var(--ink-2); }
+
+.section-note { margin-bottom: 12px; font-size: .9rem; color: var(--ink-2); max-width: 84ch; }
+.fine { margin-top: 12px; font-size: .8rem; color: var(--muted); max-width: 84ch; }
+
+/* Nothing to show yet, or still reading. */
+.empty { padding: 28px 16px; border: 2px dashed var(--hair); border-radius: 14px; text-align: center; }
+.empty-emoji { display: block; font-size: 2.2rem; line-height: 1.2; }
+.empty-title { margin-top: 6px; font-family: var(--font-head); font-weight: 600; font-size: 1.15rem; }
+.empty-text { margin: 4px auto 0; max-width: 52ch; font-size: .92rem; color: var(--ink-2); }
+.loading { padding: 6px 0; color: var(--muted); }
+
+.more {
+  display: block;
+  margin: 16px auto 0;
+  padding: 8px 20px;
+  border: 2px solid var(--line);
+  border-radius: 999px;
+  background: var(--hen);
+  color: var(--on-brand);
+  font-family: var(--font-head);
+  font-size: .95rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 3px 3px 0 var(--shadow);
+}
+.more:hover { transform: translate(-1px, -1px); box-shadow: 4px 4px 0 var(--shadow); }
+.more:active { transform: translate(3px, 3px); box-shadow: none; }
+
+/* Line chart: thin lines, quiet grid, text in ink colours, one axis. */
+.chart { margin-top: 14px; min-width: 0; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-bottom: 6px; font-size: .86rem; font-weight: 600; color: var(--ink-2); }
+.legend-item, .tip-row { display: flex; align-items: center; gap: 6px; }
+.swatch { width: 12px; height: 12px; flex: none; border-radius: 3px; }
+.chart-area { position: relative; min-width: 0; }
+.chart-plot { min-width: 0; overflow: hidden; }
+.chart-svg { display: block; max-width: 100%; height: auto; touch-action: pan-y; cursor: crosshair; }
+.chart-svg:focus-visible { outline-offset: 0; }
+.grid { stroke: var(--hair); stroke-width: 1; }
+.axis { stroke: var(--muted); stroke-width: 1; }
+.tick { fill: var(--muted); font-family: var(--font-body); font-size: 11px; }
+.line { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+.dot { stroke: var(--card); stroke-width: 2; }
+.end-label { fill: var(--ink); font-family: var(--font-body); font-size: 12px; font-weight: 600; }
+.cross-line { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; }
+.chart-tip {
+  position: absolute;
+  z-index: 2;
+  padding: 8px 10px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  box-shadow: 3px 3px 0 var(--shadow);
+  font-size: .82rem;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.tip-title { margin-bottom: 4px; font-weight: 700; }
+.tip-name { margin-right: auto; padding-right: 14px; color: var(--ink-2); }
+.tip-row b { font-variant-numeric: tabular-nums; }
+.twin { margin-top: 10px; font-size: .86rem; }
+.twin summary { width: fit-content; cursor: pointer; color: var(--ink-2); font-weight: 600; }
+.twin-scroll { max-height: 300px; margin-top: 8px; overflow: auto; border: 1px solid var(--hair); }
+
+@media (max-width: 520px) {
+  .card { padding: 16px; }
+  th, td { padding: 8px 10px; }
+}
+
+/* On a phone a stacked table shows each row as a small card: the first cell is its title,
+   every other cell is one "label  value" line. Nothing hides off to the side. */
+@media (max-width: 560px) {
+  .stack table, .stack tbody, .stack tr { display: block; }
+  .stack thead { display: none; }
+  .stack tr { padding: 12px 0; border-bottom: 1px solid var(--hair); }
+  .stack tbody tr:last-child { border-bottom: 0; }
+  .stack td { display: flex; align-items: baseline; justify-content: space-between; gap: 4px 14px; min-width: 0; padding: 3px 0; border: 0; white-space: normal; text-align: right; }
+  .stack td::before { content: attr(data-label); flex: none; max-width: 42%; text-align: left; font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+  .stack td:first-of-type { justify-content: flex-start; padding-bottom: 6px; text-align: left; font-weight: 600; }
+  .stack td:first-of-type::before { content: none; }
+  .stack td.phone-hide { display: none; }
+  .stack td.phone-hide + td { justify-content: flex-start; padding-bottom: 6px; text-align: left; font-weight: 600; }
+  .stack td.phone-hide + td::before { content: none; }
+  .stack .bid-cell { align-items: flex-end; }
+  .stack .acct { overflow-wrap: anywhere; }
+}
