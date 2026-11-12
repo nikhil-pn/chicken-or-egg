@@ -4,7 +4,7 @@ import { big, coins, near, move, price, when, acct } from './format.js';
 import { daysByRound, roundWhen } from './game.js';
 import { outcomeChip } from './result.js';
 
-const FIRST = 15;
+const FIRST = 10;
 const MORE = 25;
 
 function heads(game) {
@@ -77,7 +77,7 @@ export function renderHistory(state) {
   state.ui.history = state.ui.history || FIRST;
   onChange(box, [have, total, state.ui.history], () => {
     if (!total) {
-      put(box, empty('🪺', 'No round has settled yet',
+      put(box, empty('nest', 'No round has settled yet',
         'Each settled round adds one line here: the result, both prices, what was minted and burned, and who was slashed.'));
       return;
     }
