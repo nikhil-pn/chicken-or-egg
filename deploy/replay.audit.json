@@ -1,0 +1,31 @@
+{
+  "coop": "coop.replay.chickenoregg.testnet",
+  "checked_at_round": 115,
+  "rounds_settled": 114,
+  "log_lines": 291,
+  "recorded_days_played": 107,
+  "outcomes": {
+    "baseline": 1,
+    "void": 7,
+    "tie": 13,
+    "hen": 46,
+    "egg": 47
+  },
+  "supply": {
+    "hen": "10,920.08",
+    "egg": "11,114.77"
+  },
+  "minted": {
+    "hen": "12,983.34",
+    "egg": "13,023.31"
+  },
+  "burned": {
+    "hen": "2,063.26",
+    "egg": "1,908.54"
+  },
+  "dust_left_in_the_coop": {
+    "hen": "117",
+    "egg": "119"
+  },
+  "failures": []
+}
