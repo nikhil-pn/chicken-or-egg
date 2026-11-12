@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Play harness</title>
+<style>
+  :root { color-scheme: light dark; --bg: #fff; --fg: #111; --line: #ccc; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #111; --fg: #eee; --line: #444; } }
+  body { background: var(--bg); color: var(--fg); font: 14px/1.4 system-ui, sans-serif; margin: 16px; max-width: 720px; }
+  fieldset { border: 1px solid var(--line); margin: 0 0 12px; }
+  button, select, input { font: inherit; margin: 2px; }
+  pre { border: 1px solid var(--line); padding: 8px; white-space: pre-wrap; word-break: break-all; max-height: 50vh; overflow: auto; }
+</style>
+</head>
+<body>
+<h1>Play harness (testnet)</h1>
+<p>Bare test page for <code>web/js/chain/play.js</code>. Real transactions on NEAR testnet.</p>
+<fieldset>
+  <legend>Account: <b id="account">none</b></legend>
+  <button id="connect">Connect wallet</button>
+  <button id="guest">Play without a wallet</button>
+  <button id="disconnect">Disconnect</button>
+  <span id="guest-ok"></span>
+</fieldset>
+<fieldset>
+  <legend>Game</legend>
+  <select id="game"></select>
+  <button id="me">me()</button>
+</fieldset>
+<fieldset>
+  <legend>Bet</legend>
+  <select id="side"><option value="hen">hen ($HEN)</option><option value="egg">egg ($EGG)</option></select>
+  <input id="amount" type="number" min="1" step="1" value="100" style="width: 7em"> coins
+  <button id="bet">Bet</button>
+  <button id="cashout">Cash out</button>
+</fieldset>
+<pre id="log"></pre>
+<script type="module">
+  import * as play from '../js/chain/play.js';
+
+  const $ = (id) => document.getElementById(id);
+  const log = (...parts) => {
+    const text = parts.map((p) => (typeof p === 'string' ? p : JSON.stringify(p, (k, v) => (typeof v === 'bigint' ? v.toString() : v), 1))).join(' ');
+    $('log').textContent = `${new Date().toISOString().slice(11, 19)} ${text}\n` + $('log').textContent;
+    console.log('[harness]', text);
+  };
+  window.play = play;
+  window.harnessLog = log;
+
+  const games = (await (await fetch('../games.json')).json()).games;
+  for (const g of games) $('game').add(new Option(`${g.label} (${g.coop})`, g.id));
+  $('game').value = new URLSearchParams(location.search).get('game') || 'live';
+  const game = () => games.find((g) => g.id === $('game').value);
+  window.harnessGame = game;
+
+  play.onChange((id) => { $('account').textContent = id || 'none'; log('onChange', String(id)); });
+  $('guest-ok').textContent = play.guestAvailable() ? 'guest mode available' : 'guest mode NOT available';
+  await play.init();
+  $('account').textContent = play.accountId() || 'none';
+  log('init done', String(play.accountId()));
+
+  const run = (button, job) => $(button).addEventListener('click', async () => {
+    $(button).disabled = true;
+    try { log(button, 'ok', await job()); } catch (error) { log(button, 'ERROR:', error.message, error.txs ? { txs: error.txs } : ''); }
+    finally { $(button).disabled = false; }
+  });
+  run('connect', () => play.connect());
+  run('guest', () => play.guest());
+  run('disconnect', () => play.disconnect());
+  run('me', () => play.me(game()));
+  run('bet', () => play.bet(game(), $('side').value, BigInt($('amount').value || 0) * 10n ** 18n, (s) => log('step', s)));
+  run('cashout', () => play.cashOut(game()));
+  document.body.dataset.ready = '1';
+</script>
+</body>
+</html>
