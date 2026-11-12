@@ -1,0 +1,17 @@
+{
+  "txs": {
+    "create replay.chickenoregg.testnet": "6w2xaGVJdQvrEFxnAAzjEBWDU8eMVcu1EWyn41Y48kLV",
+    "create hen.replay.chickenoregg.testnet": "7X1tAsKm853DTbNgP4pn7ZoTyeo2ouT5Lin2LNStWH1L",
+    "create egg.replay.chickenoregg.testnet": "DaHFp9Av3Pray9augT1oQFbRoWCzYoY124BeL2T4V5r5",
+    "create coop.replay.chickenoregg.testnet": "BMgh4fHwKXk6LBWzYmiLfmfEe1G4dmPyPjU8gsHTYDBK",
+    "deploy hen.replay.chickenoregg.testnet": "3RTnbP1tgXy2Z4nbDUKbFGPwdMi6SMAfJrhWJKPaFndq",
+    "deploy egg.replay.chickenoregg.testnet": "ALw76grsf8XtVFhLgSJHXdtz16TYwvhysYp3EodadVFd",
+    "deploy coop.replay.chickenoregg.testnet": "3xnAngUxThDFKVuHfxM6tcugtsDFDNoM9Ep6C5tx7A22",
+    "register coop on hen.replay.chickenoregg.testnet": "GwfA4nsSRsK8G2D8PmmyrSjmvULjiSyhH3RfhJ7v8Vpo",
+    "register coop on egg.replay.chickenoregg.testnet": "CqnEiF1TsYXFhMsX9guAQYBxZk73xBdQfz431ibto27b"
+  },
+  "home": "replay.chickenoregg.testnet",
+  "hen": "hen.replay.chickenoregg.testnet",
+  "egg": "egg.replay.chickenoregg.testnet",
+  "coop": "coop.replay.chickenoregg.testnet"
+}
