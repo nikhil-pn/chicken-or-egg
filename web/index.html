@@ -2,130 +2,132 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Chicken or Egg</title>
-  <meta name="description" content="Which came first today? A memecoin game on NEAR testnet: $HEN against $EGG, decided each round by real shop prices that a swarm of scout agents report.">
-  <meta name="color-scheme" content="light dark">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A5%9A%3C/text%3E%3C/svg%3E">
+  <meta name="description" content="Chicken or eggs: which gets pricier today? Bet $HEN on chicken or $EGG on eggs. A memecoin game on NEAR testnet, decided each round by real shop prices that a swarm of scout agents report.">
+  <meta name="color-scheme" content="light">
+  <meta name="theme-color" content="#fffaf0">
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&display=swap">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/parts.css">
-  <link rel="stylesheet" href="css/sections.css">
-  <script src="js/theme.js"></script>
+  <link rel="stylesheet" href="css/play.css">
+  <link rel="stylesheet" href="css/views.css">
 </head>
 <body>
-  <a class="skip" href="#round">Skip to the game</a>
-  <div class="sticky-top">
-  <div id="fixture-banner" class="fixture-banner" role="alert" hidden></div>
-  <header class="top">
-    <div class="wrap top-in">
-      <a class="brand" href="#round"><span aria-hidden="true">🐔🥚</span> Chicken or Egg</a>
-      <nav class="nav" aria-label="Sections of this page">
-        <a href="#round">Round</a>
-        <a href="#scouts">Scouts</a>
-        <a href="#supply">Supply</a>
-        <a href="#history">History</a>
-        <a href="#players">Players</a>
-        <a href="#log">Log</a>
-        <a href="#rules">Rules</a>
-      </nav>
-      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch colours">🌙</button>
-    </div>
+  <a class="skip" href="#main">Skip to the game</a>
+  <div id="alarm" class="alarm" role="alert" hidden></div>
+
+  <header class="bar-wrap">
+    <nav class="bar" aria-label="Main">
+      <a class="brand" href="#/" aria-label="Chicken or Egg, play">
+        <span class="brand-art" aria-hidden="true">
+          <span class="stk stk-sm" style="--tilt:-10deg"><svg viewBox="0 0 100 100"><use href="img/stickers.svg#hen"/></svg></span>
+          <span class="stk stk-sm" style="--tilt:12deg"><svg viewBox="0 0 100 100"><use href="img/stickers.svg#egg"/></svg></span>
+        </span>
+        Chicken or Egg
+      </a>
+      <div class="bar-links">
+        <a href="#/" data-nav="play">Play</a>
+        <a href="#/how" data-nav="how">How it works</a>
+        <a href="#/scouts" data-nav="scouts">Scouts</a>
+        <a href="#/stats" data-nav="stats">Stats</a>
+        <a href="#/proof" data-nav="proof">On chain</a>
+      </div>
+      <a class="bar-game" id="game-link" href="?game=replay">Replay</a>
+      <div id="account" class="account"></div>
+      <button class="dots" id="menu-open" type="button" aria-haspopup="dialog" aria-controls="menu" aria-label="Open the menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><g fill="#1d1a12"><circle cx="12" cy="5" r="2.4"/><circle cx="12" cy="12" r="2.4"/><circle cx="12" cy="19" r="2.4"/></g></svg>
+      </button>
+    </nav>
   </header>
-  </div>
 
-  <main class="wrap">
-    <div id="game-switch" class="game-switch"></div>
-    <div id="replay-banner" class="replay-banner" hidden></div>
-    <div id="frame-notes"></div>
+  <dialog id="menu" class="sheet" aria-label="Menu">
+    <div class="sheet-head">
+      <span class="brand">Chicken or Egg</span>
+      <button class="dots" id="menu-close" type="button" aria-label="Close the menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6 L18 18 M18 6 L6 18" stroke="#1d1a12" stroke-width="3" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <nav class="sheet-links" aria-label="Views">
+      <a href="#/" data-nav="play" data-sticker="coin-hen">Play</a>
+      <a href="#/how" data-nav="how" data-sticker="chick">How it works</a>
+      <a href="#/scouts" data-nav="scouts" data-sticker="scout">The scouts</a>
+      <a href="#/stats" data-nav="stats" data-sticker="nest">Stats</a>
+      <a href="#/proof" data-nav="proof" data-sticker="seal">On chain</a>
+    </nav>
+    <div id="sheet-extra" class="sheet-extra"></div>
+  </dialog>
 
-    <section id="round" class="hero" aria-labelledby="question">
-      <p class="kicker">A memecoin game on NEAR testnet</p>
-      <h1 id="question">Which came first today?</h1>
-      <p class="lede">Two coins, one question. Every round, a swarm of scout agents reports the real shop price of chicken and of eggs. The price that went up more (or fell less) comes first: its coin hatches, the other coin gets fried.</p>
-      <div class="versus">
-        <div class="coin coin-hen">
-          <span class="coin-face" aria-hidden="true">🐔</span>
-          <span class="coin-text"><span class="coin-name">$HEN</span><span class="coin-sub">wins when chicken beats eggs</span></span>
-        </div>
-        <span class="vs">vs</span>
-        <div class="coin coin-egg">
-          <span class="coin-face" aria-hidden="true">🥚</span>
-          <span class="coin-text"><span class="coin-name">$EGG</span><span class="coin-sub">wins when eggs beat chicken</span></span>
-        </div>
-      </div>
+  <div id="game-banner" class="game-banner" hidden></div>
+
+  <main id="main" tabindex="-1">
+    <section class="view view-play" data-view="play" aria-labelledby="headline">
+      <h1 id="headline" class="headline" tabindex="-1">Chicken or eggs: which gets <span class="scribble">pricier</span> today?</h1>
+      <p id="tagline" class="tagline">Back chicken with $HEN or eggs with $EGG. Real shop prices decide.</p>
+      <div id="play-round" class="round-line" aria-live="polite"></div>
+      <div id="play-sides" class="sides"></div>
+      <div id="play-bet" class="bet"></div>
+      <div id="play-me" class="me"></div>
+      <div id="play-last" class="last"></div>
+      <nav id="play-links" class="more-links" aria-label="More about this game"></nav>
       <p id="status" class="status" role="status">Connecting to NEAR testnet…</p>
-      <div id="round-card" class="card round-card"></div>
-      <div id="tiles" class="tiles"></div>
     </section>
 
-    <section id="result" aria-label="Last result">
-      <div id="result-card" class="card result-card"></div>
-    </section>
-
-    <section id="scouts" aria-labelledby="scouts-title">
-      <h2 id="scouts-title">The scout swarm</h2>
-      <p class="lede">Each scout is an agent with its own NEAR bond. It seals a price report, then opens it. The coop takes the middle price. Honest scouts get paid, and a scout that lies loses part of its bond.</p>
-      <div id="scouts-body"></div>
-    </section>
-
-    <section id="supply" aria-labelledby="supply-title">
-      <h2 id="supply-title">Supply over time</h2>
-      <p class="lede">Every hatch mints new coins and every fry burns some. This is how much of each coin exists.</p>
-      <div class="card">
-        <p class="card-label">On the chain</p>
-        <div id="supply-body"></div>
-      </div>
-      <div class="card sim-card">
-        <p class="card-label"><span class="chip chip-warn">Simulation, not chain data</span></p>
-        <h3>A bigger crowd, simulated</h3>
-        <div id="sim-body"></div>
-      </div>
-    </section>
-
-    <section id="history" aria-labelledby="history-title">
-      <h2 id="history-title">Round history</h2>
-      <p class="lede">Every round the coop has settled: the result, the middle prices, what was minted and burned, and who was slashed.</p>
-      <div class="card"><div id="history-body"></div></div>
-    </section>
-
-    <section id="players" aria-labelledby="players-title">
-      <h2 id="players-title">Players</h2>
-      <p class="lede">A small leaderboard of the player accounts known for this game.</p>
-      <div class="card"><div id="players-body"></div></div>
-    </section>
-
-    <section id="log" aria-labelledby="log-title">
-      <h2 id="log-title">Mint and burn log</h2>
-      <p class="lede">Every coin that was ever created or destroyed, one line each, read from the coop contract.</p>
-      <div class="card"><div id="log-body"></div></div>
-    </section>
-
-    <section id="rules" aria-labelledby="rules-title">
-      <h2 id="rules-title">Rules of the game</h2>
+    <section class="view view-page" data-view="how" aria-labelledby="how-title" hidden>
+      <div class="page-head"><h2 id="how-title" tabindex="-1">How it works</h2></div>
       <ol id="rules-steps" class="rules"></ol>
-      <h3 id="params-title" class="sub-title">Parameters set at launch</h3>
-      <div class="card"><div id="params-body"></div></div>
+      <div id="words" class="words"></div>
+      <div class="card why">
+        <p><b>Why bets close before the scouts look.</b> Shop prices are public. If you could bet after seeing them, you would always win. So betting ends first, and the scouts read the shelves only after that. You are calling the next price move.</p>
+        <p><b>Why reports are sealed.</b> A scout that could see the others' numbers would just copy them. Each scout first sends a fingerprint of its report and opens it only after every seal is in.</p>
+        <p class="fine">The full rules, with the exact arithmetic: <a href="https://github.com/nikhil-pn/chicken-or-egg/blob/main/RULES.md" target="_blank" rel="noopener">RULES.md</a>.</p>
+      </div>
+    </section>
+
+    <section class="view view-page" data-view="scouts" aria-labelledby="scouts-title" hidden>
+      <div class="page-head"><h2 id="scouts-title" tabindex="-1">The scouts</h2></div>
+      <p class="lede">Each scout is an agent with its own NEAR bond. It seals a price report, then opens it. The coop takes the middle price. Honest scouts get paid; a scout that lies loses part of its bond.</p>
+      <div id="scouts-body" class="scouts-body"></div>
+    </section>
+
+    <section class="view view-page" data-view="stats" aria-labelledby="stats-title" hidden>
+      <div class="page-head"><h2 id="stats-title" tabindex="-1">Stats</h2></div>
+      <div id="tiles" class="tiles"></div>
+      <div id="result-card" class="card result-card"></div>
+      <h3>Supply over time</h3>
+      <div class="card"><div id="supply-body"></div></div>
+      <h3>Every round</h3>
+      <div class="card"><div id="history-body"></div></div>
+      <h3>Every mint and burn</h3>
+      <div class="card"><div id="log-body"></div></div>
+      <details class="see-more">
+        <summary>See more: players and a simulated crowd</summary>
+        <div class="card"><p class="card-label">Players</p><div id="players-body"></div></div>
+        <div class="card sim-card"><p class="card-label"><span class="chip chip-warn">Simulation, not chain data</span></p><div id="sim-body"></div></div>
+      </details>
+    </section>
+
+    <section class="view view-page" data-view="proof" aria-labelledby="proof-title" hidden>
+      <div class="page-head"><h2 id="proof-title" tabindex="-1">On chain</h2></div>
+      <p class="lede">The game runs on three NEAR testnet contracts. This page reads them straight from your browser.</p>
+      <div id="lock-body"></div>
+      <details class="see-more">
+        <summary>See more: parameters, contracts and testnet links</summary>
+        <div class="card"><p class="card-label">Parameters, read live from get_config</p><div id="params-body"></div></div>
+        <div class="card"><p class="card-label">Contracts and games</p><ul id="contracts" class="contracts"></ul></div>
+      </details>
     </section>
   </main>
 
   <footer class="foot">
-    <div class="wrap foot-in">
-      <div>
-        <p class="foot-title">The contracts</p>
-        <ul id="contracts" class="contracts"></ul>
-      </div>
-      <div class="foot-side">
-        <p><b>Built at NEAR HACKATHON.</b></p>
-        <p><a href="https://github.com/nikhil-pn/chicken-or-egg" target="_blank" rel="noopener">Source code on GitHub</a></p>
-        <p class="foot-fine">This page only reads the chain. It has no wallet, no keys and signs nothing. The coins are testnet coins and have no value.</p>
-      </div>
-    </div>
+    <p>Built at the NEAR hackathon · <a href="https://github.com/nikhil-pn/chicken-or-egg" target="_blank" rel="noopener">Source on GitHub</a></p>
+    <p>Testnet coins only. They have no value.</p>
   </footer>
 
-  <noscript><p class="noscript">This page reads the game from the NEAR testnet with JavaScript. Please turn JavaScript on to see it.</p></noscript>
+  <noscript><p class="noscript">This page reads the game from the NEAR testnet with JavaScript. Please turn JavaScript on to play.</p></noscript>
   <script type="module" src="js/main.js"></script>
 </body>
 </html>
