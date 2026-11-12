@@ -18,6 +18,8 @@ mod clock;
 pub const COIN: u128 = 1_000_000_000_000_000_000;
 /// Seconds in each phase of a round.
 pub const PHASE_SECS: u64 = 120;
+/// `settle` must stay far below the 300 Tgas one transaction may burn.
+pub const SETTLE_GAS_CEILING: NearGas = NearGas::from_tgas(100);
 pub const ZERO: NearToken = NearToken::from_yoctonear(0);
 pub const ONE_YOCTO: NearToken = NearToken::from_yoctonear(1);
 

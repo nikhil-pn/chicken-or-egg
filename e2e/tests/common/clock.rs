@@ -3,7 +3,7 @@
 use serde_json::{Value, json};
 use testresult::TestResult;
 
-use super::{World, ZERO};
+use super::{SETTLE_GAS_CEILING, World, ZERO};
 
 impl World {
     /// Finds out how much block time one fast-forwarded block is worth.
@@ -58,7 +58,9 @@ impl World {
         }
         self.wait_for("settle").await?;
         let result = self.run(settler, &self.coop, "settle", json!({}), ZERO).await?;
-        eprintln!("settle with {} reports burned {}", reports.len(), result.total_gas_burnt);
+        let gas = result.total_gas_burnt;
+        eprintln!("settle with {} reports burned {gas}", reports.len());
+        assert!(gas < SETTLE_GAS_CEILING, "settle burned {gas}, a third of the limit is the ceiling");
         Ok(result.json()?)
     }
 }
