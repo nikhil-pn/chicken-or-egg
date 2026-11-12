@@ -57,3 +57,15 @@ pub fn new_coop() -> Coop {
     ctx("deployer.test", ZERO, 0);
     Coop::new(config())
 }
+
+/// The seal a scout sends in the commit phase.
+pub fn seal_for(hen: u128, egg: u128, salt: &str, scout: &str) -> String {
+    let hash = env::sha256_array(format!("{hen}:{egg}:{salt}:{scout}").as_bytes());
+    hash.iter().map(|byte| format!("{byte:02x}")).collect()
+}
+
+/// Registers `name` as a scout funded by `funder.test` with the full bond.
+pub fn add_scout(coop: &mut Coop, name: &str) {
+    ctx("funder.test", NearToken::from_near(1), 0);
+    coop.register_scout(acc(name));
+}

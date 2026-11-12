@@ -9,6 +9,7 @@
 
 mod math;
 mod round;
+mod scouts;
 #[cfg(test)]
 mod testing;
 
