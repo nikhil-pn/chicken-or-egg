@@ -67,6 +67,55 @@ impl Coop {
         self.add_roost(&env::predecessor_account_id(), side, amount.0, true);
     }
 
+    /// Sends the caller every coin in their nest. A roost in the open round stays locked.
+    pub fn claim(&mut self) {
+        let account = env::predecessor_account_id();
+        let mut player =
+            self.players.get(&account).cloned().unwrap_or_else(|| env::panic_str("Not a player"));
+        self.roll(&mut player);
+        let hen = std::mem::take(&mut player.nest_hen);
+        let egg = std::mem::take(&mut player.nest_egg);
+        require!(hen > 0 || egg > 0, "Nothing to claim");
+        self.players.insert(account.clone(), player);
+        for (coin, amount) in [(Side::Hen, hen), (Side::Egg, egg)] {
+            if amount == 0 {
+                continue;
+            }
+            ext_coin::ext(self.token(coin))
+                .with_attached_deposit(NearToken::from_yoctonear(1))
+                .with_static_gas(COIN_CALL_GAS)
+                .ft_transfer(account.clone(), U128(amount), Some("claim".to_string()))
+                .then(
+                    Self::ext(env::current_account_id())
+                        .with_static_gas(CALLBACK_GAS)
+                        .on_coins_sent(account.clone(), coin, U128(amount)),
+                )
+                .detach();
+        }
+    }
+
+    /// Puts the coins back in the nest when a `claim` transfer failed, for example
+    /// because the player is not registered on that coin.
+    #[private]
+    pub fn on_coins_sent(
+        &mut self,
+        account_id: AccountId,
+        coin: Side,
+        amount: U128,
+        #[callback_result] sent: Result<(), PromiseError>,
+    ) {
+        if sent.is_ok() {
+            return;
+        }
+        if let Some(player) = self.players.get_mut(&account_id) {
+            match coin {
+                Side::Hen => player.nest_hen += amount.0,
+                Side::Egg => player.nest_egg += amount.0,
+            }
+        }
+        env::log_str("The transfer failed. The coins are back in the nest.");
+    }
+
     pub fn get_player(&self, account_id: AccountId) -> Option<PlayerView> {
         let mut player = self.players.get(&account_id)?.clone();
         self.roll(&mut player);
@@ -297,5 +346,45 @@ mod tests {
         play_round(&mut coop, 120, &all(38_380, 13_596));
         ctx(ALICE, ZERO, 250);
         coop.roost(Side::Hen, U128(104 * COIN));
+    }
+
+    #[test]
+    fn claim_empties_the_nest_and_leaves_the_open_roost_locked() {
+        let mut coop = two_players_in_round_two();
+        play_round(&mut coop, 120, &all(38_380, 13_596));
+        send(&mut coop, ALICE, Side::Egg, 40, 250);
+        ctx(ALICE, ZERO, 260);
+        coop.claim();
+        let alice = player(&coop, ALICE);
+        assert_eq!((alice.nest_hen.0, alice.nest_egg.0), (0, 0));
+        assert_eq!(alice.roost.unwrap().amount.0, 40 * COIN);
+        // One transfer on the $HEN contract, followed by the coop's own callback.
+        let receipts = near_sdk::test_utils::get_created_receipts();
+        assert!(receipts.iter().any(|receipt| receipt.receiver_id == acc("hen.test")));
+        assert!(!receipts.iter().any(|receipt| receipt.receiver_id == acc("egg.test")));
+    }
+
+    #[test]
+    #[should_panic(expected = "Nothing to claim")]
+    fn an_empty_nest_has_nothing_to_claim() {
+        let mut coop = new_coop();
+        join(&mut coop, ALICE);
+        ctx(ALICE, ZERO, 10);
+        coop.claim();
+    }
+
+    #[test]
+    fn a_failed_transfer_puts_the_coins_back_in_the_nest() {
+        let mut coop = two_players_in_round_two();
+        play_round(&mut coop, 120, &all(38_380, 13_596));
+        ctx(ALICE, ZERO, 250);
+        coop.claim();
+        assert_eq!(player(&coop, ALICE).nest_hen.0, 0);
+        ctx("coop.test", ZERO, 251);
+        coop.on_coins_sent(acc(ALICE), Side::Hen, U128(103 * COIN), Err(PromiseError::Failed));
+        assert_eq!(player(&coop, ALICE).nest_hen.0, 103 * COIN);
+        // A transfer that went through changes nothing.
+        coop.on_coins_sent(acc(ALICE), Side::Hen, U128(103 * COIN), Ok(()));
+        assert_eq!(player(&coop, ALICE).nest_hen.0, 103 * COIN);
     }
 }
