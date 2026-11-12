@@ -8,6 +8,7 @@ import { fileURLToPath } from 'node:url';
 const BASE_URL = 'https://cloud-api.near.ai/v1';
 /** Open weights, served by NEAR AI itself (`owned_by: nearai` in GET /models). */
 export const DEFAULT_MODEL = 'Qwen/Qwen3.8-27B';
+const NO_THINKING = { chat_template_kwargs: { enable_thinking: false } };
 const TIMEOUT_MS = 180_000;
 /** Asked again this many times after a failure. */
 const RETRIES = 2;
@@ -87,7 +88,8 @@ async function chat({ apiKey, baseUrl, model }, messages, { fetch, timeoutMs }) 
   const response = await fetch(`${baseUrl}/chat/completions`, {
     method: 'POST',
     headers: { 'content-type': 'application/json', authorization: `Bearer ${apiKey}` },
-    body: JSON.stringify({ model, temperature: 0, max_tokens: MAX_TOKENS, messages }),
+    // Qwen thinks before it answers; with 130 listings that took over 3 minutes. Off, it answers in about a minute.
+    body: JSON.stringify({ model, temperature: 0, max_tokens: MAX_TOKENS, messages, ...(/^qwen\//i.test(model) ? NO_THINKING : {}) }),
     signal: AbortSignal.timeout(timeoutMs),
   });
   const body = await response.json().catch(() => ({}));
