@@ -42,7 +42,7 @@ The replay plays back recorded days. The live game (`coop.chickenoregg.testnet`,
 - The scouts read the shelves once per round, 45 minutes before the commit phase ends. `swarm/shelf.mjs` does the reading; `swarm/live.mjs` turns it into the next link of the index.
 - The first reading sets the level: the median price of the products in stock. Every later reading moves the level by the geometric mean of the price changes of the products on both shelves, the same matched-basket rule as above, one reading instead of a daily median.
 - A side needs at least 5 products on both shelves, or the reading is not used and the scouts do not report. Too few reports make the round void.
-- Players pick a side in the 12-hour roost phase. The shelves are read about 11 hours after that phase closes.
+- Players pick a side in the 12-hour roost phase. The shelves are read 10 hours 15 minutes after that phase closes (45 minutes before the 11-hour commit phase ends).
 
 Since 4 Nov 2026 one of the three apps gives the reader no products, so the live readings (and the last week of the recorded series) come from two apps. The first test reading on 12 Nov found 16 chicken packs and 24 egg packs in stock.
 
