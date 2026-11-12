@@ -2,7 +2,7 @@
 import { $, h, put, onChange, empty, table, row, chip } from './dom.js';
 import { coins, when, acct } from './format.js';
 
-const FIRST = 25;
+const FIRST = 12;
 const MORE = 50;
 
 // What and how much first, so a phone sees them without scrolling sideways.
@@ -15,10 +15,10 @@ const HEADS = [
 ];
 
 const KIND = {
-  starter: { chip: ['plain', '🎁 Starter pack'], sign: '+', who: () => 'a new player' },
-  hatch: { chip: ['good', '🐣 Hatch (mint)'], sign: '+', who: (coin) => `players who roosted ${coin}` },
-  scout_pay: { chip: ['good', '🔭 Scout pay (mint)'], sign: '+', who: () => 'the honest scouts' },
-  fry: { chip: ['bad', '🔥 Fry (burn)'], sign: '−', who: (coin) => `players who roosted ${coin}` },
+  starter: { chip: ['plain', 'Starter pack'], sign: '+', who: () => 'a new player' },
+  hatch: { chip: ['good', 'Hatch (mint)'], sign: '+', who: (coin) => `players who roosted ${coin}` },
+  scout_pay: { chip: ['good', 'Scout pay (mint)'], sign: '+', who: () => 'the honest scouts' },
+  fry: { chip: ['bad', 'Fry (burn)'], sign: '−', who: (coin) => `players who roosted ${coin}` },
 };
 
 function line(entry) {
@@ -44,7 +44,7 @@ export function renderLedger(state) {
   state.ui.ledger = state.ui.ledger || FIRST;
   onChange(box, [have, total, state.ui.ledger], () => {
     if (!total) {
-      put(box, empty('📒', 'Nothing has been minted or burned yet',
+      put(box, empty('seal', 'Nothing has been minted or burned yet',
         'Both coins start at zero. The first line appears when a player claims a starter pack, or when a round has a winner.'));
       return;
     }
