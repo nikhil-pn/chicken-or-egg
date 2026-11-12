@@ -8,6 +8,9 @@
 //! There is no owner and no admin method. Every parameter is fixed in `new`.
 
 mod math;
+mod round;
+#[cfg(test)]
+mod testing;
 
 use near_sdk::json_types::U128;
 use near_sdk::store::{IterableMap, LookupMap, Vector};
