@@ -93,6 +93,18 @@ Everything below is on chain and can be checked without trusting this page.
 | Scouts that seal a report and never open it lose bond | round 11, [settle](https://testnet.nearblocks.io/txns/89naNGSBKCoC5wRJ7iaB59nGQ8rBTXReHRbLj6hfqjUr): six scouts slashed, round void |
 | A scout that lies is slashed until it is benched | `scout-7` reported false prices in seven rounds (3, and 5 to 10). It was slashed 7 times, its bond fell from 0.3 to 0.143 NEAR, below the floor of 0.15, and the coop stopped taking its reports. One of the seven: [round 6 settle](https://testnet.nearblocks.io/txns/8bSZubdzPrRLMVP9H5v9qaKqReVcbJpUWfrTtHB3XchU). |
 
+**The whole replay, checked.** All 107 recorded days were played on chain (12 Nov 2026, 114 settled rounds). [`scripts/audit.mjs`](scripts/audit.mjs) re-reads every round and every log line from the chain and compares them with `RULES.md` and the recorded prices. Result, in [`deploy/replay.audit.json`](deploy/replay.audit.json): **no failures**.
+
+| | Rounds |
+|---|---|
+| Baseline (first prices) | 1 |
+| Hen came first | 46 |
+| Egg came first | 47 |
+| Tie | 13 |
+| Void (too few reports; the day was played again) | 7 |
+
+The 46 / 47 / 13 split is exactly what the recorded prices say, day by day. Over the replay 12,983 $HEN and 13,023 $EGG were minted and 2,063 $HEN and 1,909 $EGG were fried. Supply at the end: 10,920 $HEN and 11,115 $EGG.
+
 Check any of it yourself with the NEAR CLI:
 
 ```sh
