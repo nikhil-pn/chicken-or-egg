@@ -156,7 +156,7 @@ node scripts/audit.mjs deploy/replay.json --replay
 | `swarm/` | The scout agents and the bot players that run against testnet. |
 | `scripts/` | Build, deploy, enrol scouts and players, drop the keys, audit. |
 | `deploy/` | The parameters of each game and a record of every transaction that set it up. |
-| `docs/` | [`SIMULATION.md`](docs/SIMULATION.md), [`INDEX.md`](docs/INDEX.md) (where the prices come from) |
+| `docs/` | [`SIMULATION.md`](docs/SIMULATION.md), [`INDEX.md`](docs/INDEX.md) (where the prices come from), [`REQUIREMENTS.md`](docs/REQUIREMENTS.md) (both track prompts, line by line), [`TRACKS.md`](docs/TRACKS.md) |
 | [`AI_USAGE.md`](AI_USAGE.md) | What the AI coding agent did and what people decided. |
 
 Everything here was written during the hackathon. The one thing that existed before is our own price tracker and its archive of shop prices. It is not in this repository; only the daily aggregates made from it are. See [`docs/INDEX.md`](docs/INDEX.md).
