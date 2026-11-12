@@ -36,7 +36,11 @@
     "sharpbeak.chickenoregg.testnet claims its starter pack": "21Fp2MMvWtVrFfpbPVvACfPfUPcWKV1rqNTMWWsuCG8y",
     "hen.chickenoregg.testnet drops key Dgm6yomF": "27Yey6TLx19X6Ff8BcDdpZ5VJxks2RfLnq9xwrpSDu8m",
     "egg.chickenoregg.testnet drops key 28ph8bPy": "9Q4oBiFKrkm9HHF6PtfBN4ecJqf7x6FdT5Z8KtbMxaQY",
-    "coop.chickenoregg.testnet drops key 9ErRzs9E": "BrJS2eaGvT5G428dvKxmf8pewatJCKzaUUWEA3KxEJoL"
+    "coop.chickenoregg.testnet drops key 9ErRzs9E": "BrJS2eaGvT5G428dvKxmf8pewatJCKzaUUWEA3KxEJoL",
+    "create scout-8.chickenoregg.testnet": "35Q47y6w3PmCWh13bSZRS6rgShrM1aSoa4ciyFuYHRDs",
+    "scout-8.chickenoregg.testnet posts its bond": "33tSwScNRjeqbhwtzvTebVyPB9vFa2eZXdZkioaed2XL",
+    "scout-8.chickenoregg.testnet joins the coop": "9J3k1DqPtL9SfPZViwGM8ZkwH6kdRuRfDAWwa2AYxPDy",
+    "scout-8.chickenoregg.testnet gets its working key": "CEUfMyGbaHDco24o2yyZyfS4M2LbpZu7QPYE4VP3zhYd"
   },
   "home": "chickenoregg.testnet",
   "hen": "hen.chickenoregg.testnet",
@@ -49,7 +53,8 @@
     "scout-4.chickenoregg.testnet",
     "scout-5.chickenoregg.testnet",
     "scout-6.chickenoregg.testnet",
-    "scout-7.chickenoregg.testnet"
+    "scout-7.chickenoregg.testnet",
+    "scout-8.chickenoregg.testnet"
   ],
   "players": [
     "henmaxi.chickenoregg.testnet",
