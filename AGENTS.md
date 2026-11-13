@@ -2,6 +2,8 @@
 
 Chicken or Egg is a daily memecoin duel on NEAR **testnet**. Two NEP-141 coins, $HEN and $EGG. Players lock coins on a side; bonded scout agents report the shop prices of chicken and eggs with commit and reveal; the coop contract takes the middle report, mints 3% to the winning side and burns 3% from the losing side. Nothing runs on mainnet. The README is the full description; this file is the short path to checking it.
 
+Submitted to NEAR HACKATHON on 14 Nov 2026, tracks `memecoins` and `swarms`. Demo video (1:56): https://x.com/NikhilEth/status/2121366514842636792. Page: https://chickenoregg.exprmnts.fun. Screenshots: `docs/img/screens.jpg`.
+
 ## Deployed accounts (testnet)
 
 | Game | Coop | Coins | State |
