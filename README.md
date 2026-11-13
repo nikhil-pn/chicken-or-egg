@@ -1,14 +1,24 @@
 # Chicken or Egg
 
+![Chicken or Egg: $HEN vs $EGG, a daily memecoin duel on NEAR decided by real grocery prices](web/img/og.png)
+
 **Which came first? Real prices decide, every round.**
 
-> Built at NEAR HACKATHON. Deadline: 14 Nov 2026 23:59 UTC (Sun 15 Nov 05:29 IST).
+> Built at NEAR HACKATHON and submitted on 14 Nov 2026. Deadline: 14 Nov 2026 23:59 UTC (Sun 15 Nov 05:29 IST).
 > Tracks: Memecoins With Mechanics (`memecoins`) and AI Swarms (`swarms`).
 > Network: NEAR testnet only. Nothing here runs on mainnet.
+
+**Demo video (1:56): [the demo post on X](https://x.com/NikhilEth/status/2121366514842636792)**. It shows a bet in four taps, the hatch and fry, the scouts sealing and opening their reports, the AI scout, the liar scout being slashed and benched, the locked contracts and the 107-day audit.
 
 **Play it: [chickenoregg.exprmnts.fun](https://chickenoregg.exprmnts.fun)**. Pick chicken or eggs, pick an amount, bet. No wallet needed: "Play without a wallet" makes a testnet account in your browser and your first bet also claims the starter pack: 1,000 $HEN and 1,000 $EGG for 0.1 testnet NEAR. Or connect a NEAR testnet wallet. The [replay of 107 recorded days](https://chickenoregg.exprmnts.fun/?game=replay) is there too. The page reads the chain straight from your browser.
 
 Two memecoins, **$HEN** and **$EGG**, settle the oldest argument on Earth, one round at a time.
+
+## Screenshots
+
+![The page on a phone: today's round, the scouts and the middle price, the replay's stats, and the on-chain check that no admin key exists](docs/img/screens.jpg)
+
+Left to right: **Play** (today's round, bets closed, result at 14:43 IST), **The scouts** (round 1's middle price from 8 opened reports, 7 honest, `scout-7` slashed), **Stats** of the 107-day replay (46 hen, 47 egg, 13 ties), **On chain** (no admin key). Taken from the live page on 14 Nov 2026.
 
 ## Try it in five minutes
 
