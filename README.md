@@ -135,7 +135,9 @@ Every transaction of the launch is listed in [`deploy/replay.lock.json`](deploy/
 
 ### The live game: one round a day
 
-A second coop plays real days instead of recorded ones. It started on 12 Nov 2026 and runs through judging. The same seven scouts and six bot players are in it.
+A second coop plays real days instead of recorded ones. It started on 12 Nov 2026 and runs through judging. The same seven scouts and six bot players are in it, plus one more scout:
+
+- **`scout-8`, the AI scout** ([`swarm/ai.mjs`](swarm/ai.mjs)). The other scouts use a fixed product filter. `scout-8` gets every raw listing from the shops and asks an open model on NEAR AI Cloud which ones are plain curry-cut chicken and plain hen eggs. It then builds its own index from its own picks. In round 1 the model (`Qwen/Qwen3.8-27B`) kept 13 of 68 chicken listings and all 69 egg listings. Its first index starts level with the other scouts on purpose, so round 1 proves only that it reported. From round 2 on, its prices move with its own picks, and the contract slashes it like any other scout if it drifts more than 1% from the middle. If the model cannot be reached, it skips the round, and a skipped round costs nothing.
 
 | Account | What it is |
 |---|---|
@@ -148,12 +150,12 @@ A second coop plays real days instead of recorded ones. It started on 12 Nov 202
 | Nobody holds a key to it | last key deleted: [coop](https://testnet.nearblocks.io/txns/BrJS2eaGvT5G428dvKxmf8pewatJCKzaUUWEA3KxEJoL) · [$HEN](https://testnet.nearblocks.io/txns/27Yey6TLx19X6Ff8BcDdpZ5VJxks2RfLnq9xwrpSDu8m) · [$EGG](https://testnet.nearblocks.io/txns/9Q4oBiFKrkm9HHF6PtfBN4ecJqf7x6FdT5Z8KtbMxaQY) |
 | Same code as the replay | both coops report code hash `69tGTYT1znsLCzYj98SFBiZec6peQJTJ2frDPCJG2Xik`, both $HEN coins `DzJ6HiyqRBFEmxw7anRvzw6LQf7xNjJdKFwkxUfYahRF` |
 
-Round 1 sets the baseline (13 Nov). Round 2 is the first one with a winner (14 Nov). How the shelves are read: [`docs/INDEX.md`](docs/INDEX.md#the-live-game). Every transaction: [`deploy/live.lock.json`](deploy/live.lock.json).
+Round 1 set the baseline on 13 Nov ([settle](https://testnet.nearblocks.io/txns/4Xqadj8eMJEtk8Tekikq4SqkExF72DHAPFN3nA4jGXCy)): prices `hen 41700`, `egg 14850`, 8 reports, 7 honest, `scout-7` slashed. Cashing out works: a bot player claimed the 500 $HEN left in its nest after the baseline ([claim](https://testnet.nearblocks.io/txns/GZiizQub2NsMAbFD5YPZVfGbTgpsNgJXZPZtsrmFueR6)), and its roost in round 2 stayed in place. Round 2 is the first one with a winner (14 Nov). How the shelves are read: [`docs/INDEX.md`](docs/INDEX.md#the-live-game). Every transaction: [`deploy/live.lock.json`](deploy/live.lock.json).
 
 ## Limits, stated plainly
 
 - **A majority of scouts can lie together.** The middle value is safe only while fewer than half of the reporting scouts collude. Anyone can join as a scout for one bond, so an attack costs about (N/2 + 1) bonds. With real money the bond must be far larger than what one round can move.
-- **We run the first scouts.** All seven run in one program on our machine, and in the live game they share one shelf reading, so the live game tests the coop, not whether the scouts are independent. Registration is open to anyone, but until others join, the result rests on us.
+- **We run the first scouts.** They all run in one program on our machine, and in the live game they share one shelf reading (the AI scout picks its own products from it), so the live game tests the coop, not whether the scouts are independent. Registration is open to anyone, but until others join, the result rests on us.
 - **Many accounts.** Hatches and fries are in proportion to the coins roosted, so splitting coins over many accounts gains nothing. The starter pack is per account. One person with many accounts can take many packs; only the fee (0.1 NEAR) and the cap (100 packs) limit that.
 - **Shop prices move slowly.** Someone who watches the shelves closely will guess better than a coin flip. That is the game.
 - **One city, three shops.** The prices are real shelf prices from grocery delivery apps in Kochi, India. This is a real series, not a national statistic. The contract compares each price only with its own value in the last round, so the currency and the units drop out. See [`docs/INDEX.md`](docs/INDEX.md).
