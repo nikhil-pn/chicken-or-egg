@@ -125,8 +125,15 @@ button { font: inherit; color: inherit; }
   white-space: nowrap;
   transition: transform .25s var(--spring), background-color .15s;
 }
-.bar-links a:hover { background: rgb(255 213 74 / 35%); color: var(--ink); transform: rotate(-2deg); }
+.bar-links a { display: inline-block; }
+.bar-links a:hover { background: rgb(255 213 74 / 35%); color: var(--ink); }
 .bar-links a[aria-current="page"] { background: var(--hen); border-color: var(--ink); color: var(--ink); box-shadow: var(--pop-sm); }
+.bar-links a[aria-current="page"]:hover { background: var(--hen); color: var(--ink); }
+.bar-links a[data-nav="how"]:hover,
+.bar-links a[data-nav="stats"]:hover { transform: rotate(3deg); }
+.bar-links a[data-nav="play"]:hover,
+.bar-links a[data-nav="scouts"]:hover,
+.bar-links a[data-nav="proof"]:hover { transform: rotate(-3deg); }
 .bar-game { display: none; border: 2px dashed var(--ink); color: var(--ink); background: var(--card); }
 .bar-game:hover { transform: rotate(2deg); }
 .account { display: none; align-items: center; gap: 6px; font-size: .84rem; }
