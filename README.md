@@ -227,7 +227,7 @@ Three people.
 | Who | Does what | Where |
 |---|---|---|
 | Nikhil | The game, the contracts, the scouts and the page. Submits the project. | GitHub [nikhil-pn](https://github.com/nikhil-pn) |
-| Hina | The demo film: script check and voiceover. | GitHub [Hina-Hanan](https://github.com/Hina-Hanan), X [@iam_hinaaaa](https://x.com/iam_hinaaaa) |
+| Hina | Ideas and product direction: brainstormed the game and the meme with Nikhil and steered what to build. | GitHub [Hina-Hanan](https://github.com/Hina-Hanan), X [@iam_hinaaaa](https://x.com/iam_hinaaaa) |
 | Nandhakishor A | Product and degen manager. | X [@0xnandhu](https://x.com/0xnandhu) |
 
 An AI coding agent wrote most of the code under our direction. [`AI_USAGE.md`](AI_USAGE.md) says who did what.
