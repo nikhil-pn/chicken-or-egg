@@ -230,6 +230,21 @@ The runners that play the games are `swarm/run.mjs` (scouts) and `swarm/play.mjs
 
 Everything here was written during the hackathon. The one thing that existed before is our own price tracker and its archive of shop prices. It is not in this repository; only the daily aggregates made from it are. See [`docs/INDEX.md`](docs/INDEX.md).
 
+Libraries and services we use (none of them ours):
+
+| What | Used for |
+|---|---|
+| `near-sdk` 5.30 and `near-contract-standards` 5.30 (Rust) | The coop contract and the NEP-141 coins |
+| `cargo-near` | Reproducible contract builds |
+| `near-sandbox`, `near-api` 0.8, `tokio`, `sha2`, `serde_json`, `testresult` | The sandbox tests in `e2e/` |
+| `near-api-js` 7.5 | The scout and player runners, the scripts, and the page (vendored in `web/vendor/`) |
+| NEAR Connect (`web/vendor/near-connect.js`) | Wallet sign-in on the page |
+| NEAR testnet faucet | Guest accounts for "Play without a wallet" |
+| NEAR AI Cloud, model `Qwen/Qwen3.8-27B` | The AI scout's product picks |
+| FastNEAR and dRPC public RPC | Reading and writing testnet |
+| Fredoka (Google Fonts) | The page's headings |
+| Vercel | Hosting the static page |
+
 ## Team
 
 Three people.
