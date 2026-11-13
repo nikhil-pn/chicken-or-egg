@@ -6,7 +6,7 @@
 > Tracks: Memecoins With Mechanics (`memecoins`) and AI Swarms (`swarms`).
 > Network: NEAR testnet only. Nothing here runs on mainnet.
 
-**Play it: [chickenoregg.vercel.app](https://chickenoregg.vercel.app)**. Pick chicken or eggs, pick an amount, bet. No wallet needed: "Play without a wallet" makes a testnet account in your browser and your first bet also claims the starter pack: 1,000 $HEN and 1,000 $EGG for 0.1 testnet NEAR. Or connect a NEAR testnet wallet. The [replay of 107 recorded days](https://chickenoregg.vercel.app/?game=replay) is there too. The page reads the chain straight from your browser.
+**Play it: [chickenoregg.exprmnts.fun](https://chickenoregg.exprmnts.fun)**. Pick chicken or eggs, pick an amount, bet. No wallet needed: "Play without a wallet" makes a testnet account in your browser and your first bet also claims the starter pack: 1,000 $HEN and 1,000 $EGG for 0.1 testnet NEAR. Or connect a NEAR testnet wallet. The [replay of 107 recorded days](https://chickenoregg.exprmnts.fun/?game=replay) is there too. The page reads the chain straight from your browser.
 
 Two memecoins, **$HEN** and **$EGG**, settle the oldest argument on Earth, one round at a time.
 
@@ -14,11 +14,11 @@ Two memecoins, **$HEN** and **$EGG**, settle the oldest argument on Earth, one r
 
 Each step: do this, then see that. No install, no wallet.
 
-1. Open [chickenoregg.vercel.app](https://chickenoregg.vercel.app). You see today's round of the live game, a countdown, and how many coins back chicken and eggs.
+1. Open [chickenoregg.exprmnts.fun](https://chickenoregg.exprmnts.fun). You see today's round of the live game, a countdown, and how many coins back chicken and eggs.
 2. Tap **Chicken**, tap **100**, tap **Play without a wallet**, tap **Bet**. In about 15 seconds you see "You're in: 100 $HEN on chicken" with a link to the transaction. Your first bet also claimed the starter pack (1,000 $HEN and 1,000 $EGG for 0.1 testnet NEAR, paid from the guest account's faucet NEAR). Bets are open for 12 hours a day, from about 09:13 to 21:13 UTC; outside that window the card says when they open again.
-3. Open **Scouts** ([chickenoregg.vercel.app/#/scouts](https://chickenoregg.vercel.app/#/scouts)). You see the seven scout agents, their bonds and earnings, their reports once they are opened, and the middle price. In the [replay's scouts view](https://chickenoregg.vercel.app/?game=replay#/scouts), `scout-7` is benched: it lied in seven rounds, was slashed each time and earned nothing. `scout-6`, the lazy one, is benched too: it sealed reports and never opened them (rounds 23, 26, 33, 38, 39 and 46, plus the round-11 outage).
-4. Open **Stats** ([chickenoregg.vercel.app/#/stats](https://chickenoregg.vercel.app/#/stats)). You see every settled round and every mint and burn, newest first.
-5. Open **On chain** ([chickenoregg.vercel.app/#/proof](https://chickenoregg.vercel.app/#/proof)). You see that the coins and the coop have no access keys, Open **See more** to read every parameter live from the contract.
+3. Open **Scouts** ([chickenoregg.exprmnts.fun/#/scouts](https://chickenoregg.exprmnts.fun/#/scouts)). You see the eight scout agents of the live game (seven scripted, plus `scout-8`, the AI scout), their bonds and earnings, their reports once they are opened, and the middle price. In the [replay's scouts view](https://chickenoregg.exprmnts.fun/?game=replay#/scouts), `scout-7` is benched: it lied in seven rounds, was slashed each time and earned nothing. `scout-6`, the lazy one, is benched too: it sealed reports and never opened them (rounds 23, 26, 33, 38, 39 and 46, plus the round-11 outage).
+4. Open **Stats** ([chickenoregg.exprmnts.fun/#/stats](https://chickenoregg.exprmnts.fun/#/stats)). You see every settled round and every mint and burn, newest first.
+5. Open **On chain** ([chickenoregg.exprmnts.fun/#/proof](https://chickenoregg.exprmnts.fun/#/proof)). You see that the coins and the coop have no access keys, Open **See more** to read every parameter live from the contract.
 6. Check it without the page:
    ```
    near account list-keys coop.chickenoregg.testnet network-config testnet now   # no access keys
