@@ -22,7 +22,10 @@ Scouts: `scout-1` to `scout-7.chickenoregg.testnet` in both games. The live game
 | `node scripts/audit.mjs deploy/replay.json --replay` | reads testnet with no key; prints the tally (1 baseline, 46 hen, 47 egg, 13 tie, 7 void) and `"failures": []` |
 | `near account list-keys coop.chickenoregg.testnet network-config testnet now` | no keys (same for the other five contract accounts) |
 | open a transaction from the README tables | `testnet.nearblocks.io` pages may show a bot check to headless browsers; use `https://api-testnet.nearblocks.io/v3/txns/<hash>` or RPC `https://near-testnet.drpc.org` (method `tx`) instead |
-| open https://chickenoregg.vercel.app | the live round; README "Try it in five minutes" lists each step and what you should see |
+| open https://chickenoregg.exprmnts.fun | the live round; README "Try it in five minutes" lists each step and what you should see (`chickenoregg.vercel.app` redirects there) |
+| RPC `call_function` on `coop.chickenoregg.testnet`, `get_history` with `{"from":0,"limit":5}` | the live game's settled rounds. Round 1 (13 Nov) is the baseline: prices `hen 41700`, `egg 14850`, 8 reveals, 7 honest, `scout-7` slashed, settled by `scout-8`. Round 2 (14 Nov) is the first with a winner. |
+| `get_scout` with `{"scout_id":"scout-8.chickenoregg.testnet"}` on the live coop | the AI scout: a 0.3 NEAR bond, `honest_rounds` ≥ 1, `slashed_rounds` 0, NEAR earned from the pot. Its first index starts level with the other scouts by design (`swarm/sources.mjs`), so round 1 shows only that it reports; from round 2 its prices follow its own picks. |
+| `get_player` with `{"account_id":"coinflip.chickenoregg.testnet"}`, then transaction `GZiizQub2NsMAbFD5YPZVfGbTgpsNgJXZPZtsrmFueR6` | cash-out works: the bot claimed the 500 $HEN in its nest after round 1; its nest is 0 and its round-2 roost stayed locked |
 
 ## Where things are
 
