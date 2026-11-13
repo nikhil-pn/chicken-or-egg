@@ -28,7 +28,7 @@ Scouts: `scout-1` to `scout-7.chickenoregg.testnet` in both games. The live game
 
 - `RULES.md`: the specification. The contracts follow it; `scripts/audit.mjs` checks the chain against it.
 - `contracts/coop` (the game), `contracts/token` (NEP-141 coin, mint and burn only by the coop).
-- `swarm/`: the scout and player runners (`run.mjs`, `play.mjs`). Scouts are scripted, no LLM calls.
+- `swarm/`: the scout and player runners (`run.mjs`, `play.mjs`). `scout-1` to `scout-7` are scripted, no LLM calls; `scout-8` (live game only) calls a model through `swarm/ai.mjs`.
 - `sim/`: the reference model in JavaScript and the 60-day supply simulation.
 - `web/`: the static page; `web/js/chain/` is the betting code (wallet via NEAR Connect, or a guest testnet account).
 - `deploy/*.lock.json`: every deployment transaction; `deploy/replay.audit.json`: the audit result.
